@@ -6,6 +6,31 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="manifest" href="./manifest.json">
+    <title>pwa短剧</title>
+    <script type="text/javascript">
+      (function (doc, win) {
+        var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function () {
+              var clientWidth = docEl.clientWidth;
+              if (!clientWidth) return;
+              docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+              if (clientWidth >= 750) docEl.style.fontSize = '100px';
+            };
+        recalc();
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+        win.onunload = function () {
+          win.removeEventListener(resizeEvt, recalc, false);
+          doc.removeEventListener('DOMContentLoaded', recalc, false);
+        }
+      })(document, window);
+    </script>
+    <link rel="stylesheet" href="<%= BASE_URL %>loading.css">
+    <!--    <script src="./client.js"></script>-->
+    <!--    <script src="./vconsole.min.js"></script><script>new VConsole();</script>-->
   </head>
   <body>
     <noscript>
@@ -13,5 +38,26 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <div id="imgCover">
+      <div class="loading-wrap">
+        <div class="loading-spinner">
+          <div class="loading-circle">
+            <div class="loading-circle-item">
+              <div class="loading-color-item"></div>
+            </div>
+          </div>
+          <div class="loading-circle2">
+            <div class="loading-circle-item">
+              <div class="loading-color-item2"></div>
+            </div>
+          </div>
+          <div class="loading-circle3">
+            <div class="loading-circle-item">
+              <div class="loading-color-item3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

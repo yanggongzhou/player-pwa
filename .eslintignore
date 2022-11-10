@@ -1,0 +1,6 @@
+dist/*.js
+src/assets
+tests/unit/coverage
+public/**/*.js
+vue.config.js
+src/@types

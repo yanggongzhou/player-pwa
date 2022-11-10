@@ -1,20 +1,9 @@
 # player-pwa
 
-## Project setup
+### create icon
 ```
-yarn install
+npx pwa-asset-generator logo.png icons
 ```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
 ### Lints and fixes files
 ```
 yarn lint
