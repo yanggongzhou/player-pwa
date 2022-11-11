@@ -4,6 +4,7 @@ const ComponentsPlugin = require('unplugin-vue-components/webpack');
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  // https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
   pwa: {
     name: 'Dz Theater', // 名字
     themeColor: "#373737", // 背景颜色
