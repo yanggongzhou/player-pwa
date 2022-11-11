@@ -45,10 +45,6 @@ const AndWebQuit = () => {
   }
 }
 
-const onResume = () => {
-  console.log('-----------onResume-----------')
-}
-
 const updateOnlineStatus = () => {
   DeviceModule.SetIsOnline(true)
   if (AppModule.bookInfo.autoAdd === EAutoAdd.否) {
@@ -68,7 +64,6 @@ const updateOfflineStatus = () => {
 onBeforeMount(() => {
   window.AndWebQuit = AndWebQuit // 安卓手势返回 & 手机底部按钮返回
   window.AndWebPre = AndWebPre as any // 章节预加载
-  window.onResume = onResume // H5页面可读时客户端调用
   window.AndWebSelect = AndWebSelect as any // 选择章节数据
   console.log('-----------播放器启动---bookSotre-------', window.bookSotre)
   // 初始化数据

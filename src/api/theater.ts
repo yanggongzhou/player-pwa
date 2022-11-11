@@ -12,4 +12,3 @@ export const netTheater = async (): Promise<any> => {
     "readpref": "0"
   })
 }
-

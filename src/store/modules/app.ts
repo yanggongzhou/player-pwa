@@ -108,7 +108,6 @@ class App extends VuexModule implements IAppState {
       this.SetIsShowEndPage(false)
     }
     // if (index === this.swipeList.length - 1) {
-    console.log('ChaptersModule.chapterAllList', ChaptersModule.chapterAllList)
     if (ChaptersModule.chapterAllList.length === 0) return
     const chapterInfo = ChaptersModule.chapterAllList[this.swipeList[index].chapterIndex - 1]
     if (chapterInfo.chapterIndex === ChaptersModule.totalChapters) {

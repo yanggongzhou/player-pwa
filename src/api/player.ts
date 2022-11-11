@@ -45,9 +45,8 @@ export const netVideoSource = async (book_id = '41000000003', chapter_id = ''): 
  * @param chapterId
  */
 export const netVideoPre = debounce(200, async (book_id: string, chapter_id: string) => {
-  console.log('-----------WebAndPre 章节预加载-----------', chapter_id)
-  const data236 = await Service.post('/call/236.do', { book_id, chapter_id })
-  console.log('data236------>', data236)
+  console.log('-----------章节预加载-----------', chapter_id)
+  return await netVideoSource(book_id, chapter_id)
 })
 /**
  * 获取客户端请求头
@@ -70,7 +69,6 @@ export const netCatalogList = async (params: ICatalogParams): Promise<INetCatalo
   console.log('-----------s 剧集列表-----------')
   return await Service.post('/call/412.do', { pageSize: 30, ...params })
 }
-
 
 /**
  * WebAndSelect 章节选择

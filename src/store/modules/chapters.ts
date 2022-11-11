@@ -82,7 +82,6 @@ class Chapters extends VuexModule implements IChaptersState {
     })
     if (_data) {
       const { chapterList, totalChapters } = _data
-      console.log('-----Net AllChapterList----', chapterList)
       this.SET_TOTALCHAPTERS(totalChapters)
       !!chapterList && this.SET_CHAPTERALLLIST(chapterList)
     }
