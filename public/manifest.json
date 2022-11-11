@@ -1,17 +1,33 @@
 {
-  "name": "theater-pwa",
-  "short_name": "wc",
+  "name": "dz-theater",
+  "short_name": "DzTheater",
   "icon": [
     {
-      "src": "./img/icons/android-chrome-192x192.png",
+      "src": "img/icons/manifest-icon-192.maskable.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "./img/icons/android-chrome-512x512.png",
+      "src": "img/icons/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "img/icons/manifest-icon-512.maskable.png",
       "sizes": "512x512",
-      "type": "image/png"
-    }],
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/icons/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+,
   "theme_color": "white",
   "display": "standalone",
   "start_url": "./index.html",
@@ -23,7 +39,7 @@
       "short_name": "Today",
       "description": "View weather information for today",
       "url": "index.html",
-      "icons": [{ "src": "./img/icons/android-chrome-192x192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "./img/icons/manifest-icon-192.maskable.png", "sizes": "192x192" }]
     }
   ],
   "description": "Weather forecast information"

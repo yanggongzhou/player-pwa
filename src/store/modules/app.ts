@@ -163,9 +163,6 @@ class App extends VuexModule implements IAppState {
     }
     // 必须先获取章节列表再覆盖swipe数据
     await ChaptersModule.GetAllChapterList(data.bookInfo.bookId)
-    // 删除初始loading
-    const ImgCoverDom = document.getElementById('imgCover')
-    !!ImgCoverDom && document.body.removeChild(ImgCoverDom)
     this.RefreshVideoSource(data)
     // 获取推荐章节
     data.bookInfo.bookId && await this.RecommendVideoSource(data.bookInfo.bookId)

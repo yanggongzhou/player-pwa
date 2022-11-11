@@ -9,7 +9,7 @@
         <img :src="bookInfo.autoAdd === EAutoAdd.是 ? IconDramaActive : IconDrama" alt=""/>
         <span>{{ (bookInfo.autoAdd === EAutoAdd.是 ? '已' : '') + $t('player.drama') }}</span>
       </div>
-      <div v-if="isOnline && chapterAllList.length > 0" class="iconDramaBox" @click="openCatalog">
+      <div v-if="isOnline" class="iconDramaBox" @click="openCatalog">
         <img :src="IconCatalog" alt=""/>
         <span>{{ $t('player.chooseChapter') }}</span>
       </div>
@@ -41,7 +41,6 @@ const chapterName = computed(() => AppModule.swipeList.length > 0 ? `第${AppMod
 const bookInfo = computed(() => AppModule.bookInfo)
 const isShowDrama = computed(() => ChaptersModule.isShowDrama)
 const isOnline = computed(() => DeviceModule.isOnline)
-const chapterAllList = computed(() => ChaptersModule.chapterAllList)
 const { t } = useI18n()
 const dramaVideo = () => {
   if (bookInfo.value.autoAdd === EAutoAdd.是) return

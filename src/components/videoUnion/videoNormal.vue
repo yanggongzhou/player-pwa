@@ -253,7 +253,7 @@ onBeforeUnmount(() => {
   emits('videoStageState', {
     chapterId: props.chapterInfo.chapterId,
     ...videoStageStateData,
-    leaveCurrentTime: videoInstance.value.currentTime(),
+    leaveCurrentTime: videoInstance.value.currentTime ? videoInstance.value.currentTime() : 0,
     startDate: startDate.value,
     endDate: Math.round(new Date().getTime() / 1000)
   })

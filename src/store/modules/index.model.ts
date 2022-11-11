@@ -26,7 +26,6 @@ export interface IChaptersState {
   tabIndex: number;
   totalChapters: number;
   chapterAllList: ICatalogListItem[];
-  chapterInfoMap: Map<string, IChapterInfo>
   isShowDrama: boolean;
   isPayVisible: boolean;
 }

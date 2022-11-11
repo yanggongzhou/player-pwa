@@ -24,7 +24,7 @@ const BaseUrlEnvironment = () => {
   if (location.host === 'yfb-player-feat.klynf.com') {
     return EBaseUrlEnvironment.staging
   }
-  if (location.host === '192.168.1.70:89' || location.host === 'localhost:8080') {
+  if (location.host === '192.168.1.70:89' || location.host === 'localhost:8000' || location.host === '192.168.1.9:8000') {
     return EBaseUrlEnvironment.test
   }
   return EBaseUrlEnvironment.production
