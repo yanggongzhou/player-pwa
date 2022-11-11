@@ -1,51 +1,54 @@
 import { ICatalogParams, INetCatalogListRes, INetVideoSourceRes } from '@/types/player.interface'
-import { fetchGet } from '@/utils/ajax'
-import { IWebAndLogParam } from '@/types/common.interface'
+import { EAutoAdd, EChapterStatus, IWebAndLogParam } from '@/types/common.interface'
 import { ChaptersModule } from '@/store/modules/chapters'
-import { netHiveLog } from '@/api/clientLog'
 import { DeviceModule } from '@/store/modules/device'
 import { debounce } from 'throttle-debounce'
+import Service, { BASEURL } from '@/utils/request'
 
 const WebApi = window.bookSotre
-// 测试 http://192.168.1.70:89/
-// 预发布 https://yfb-player-feat.klynf.com/
-// 线上: https://player-feat.klynf.com/
 
-enum EBaseUrlEnvironment {
-  test = 'http://192.168.0.241:4080',
-  staging = 'http://yfb.klynf.com',
-  production = 'https://api.klynf.com',
-}
-
-const BaseUrlEnvironment = () => {
-  if (location.host === 'player-feat.klynf.com') {
-    return EBaseUrlEnvironment.production
-  }
-  if (location.host === 'yfb-player-feat.klynf.com') {
-    return EBaseUrlEnvironment.staging
-  }
-  if (location.host === '192.168.1.70:89' || location.host === 'localhost:8000' || location.host === '192.168.1.9:8000') {
-    return EBaseUrlEnvironment.test
-  }
-  return EBaseUrlEnvironment.production
-}
-
-export const BASEURL = BaseUrlEnvironment();
 // export const BASEURL = process.env.NODE_ENV === "production" ? BaseUrlEnvironment.staging : BaseUrlEnvironment.test
 console.log('-----------BASEURL----------->', BASEURL)
 
 /**
- * 初始化接口
+ * 初始化接口 / 快速打开接口
+ * @param book_id
+ * @param chapter_id
  */
-export const netVideoSource = (): INetVideoSourceRes | void => {
-  if (WebApi && WebApi.WebAndInit) {
-    netHiveLog('WebAndInit', {})
-    const data = JSON.parse(WebApi.WebAndInit())
-    console.log('-----------WebAndInit 初始化接口数据----------->', data)
-    return data
+export const netVideoSource = async (book_id = '41000000003', chapter_id = ''): Promise<INetVideoSourceRes | void> => {
+  console.log('-----------初始化接口 / 快速打开接口----------->')
+  const { book } = await Service.post('/call/244.do', { book_id, chapter_id })
+  const { videoInfo, chapter_img } = book.content_list[0]
+  return {
+    bookInfo: {
+      bookId: book.book_id,
+      bookName: book.book_name,
+      autoAdd: EAutoAdd.否,
+      bookCover: book.cover_url,
+      bookFinishStatus: book.market_status,
+    },
+    chapterInfo: {
+      chapterId: book.content_list[0].chapter_id,
+      chapterIndex: 1,
+      chapterName: '',
+      chapterUrl: chapter_img,
+      content: videoInfo,
+      duration: videoInfo.duration,
+      chapterStatus: EChapterStatus.免费
+    }
   }
 }
 
+/**
+ * WebAndPre 章节预加载 236
+ * @param bookId
+ * @param chapterId
+ */
+export const netVideoPre = debounce(200, async (book_id: string, chapter_id: string) => {
+  console.log('-----------WebAndPre 章节预加载-----------', chapter_id)
+  const data236 = await Service.post('/call/236.do', { book_id, chapter_id })
+  console.log('data236------>', data236)
+})
 /**
  * 获取客户端请求头
  */
@@ -65,26 +68,9 @@ export const netWebAndHeader = () => {
  */
 export const netCatalogList = async (params: ICatalogParams): Promise<INetCatalogListRes> => {
   console.log('-----------s 剧集列表-----------')
-  return await fetchGet(BASEURL + '/asg/portal.do', {
-    call: 412,
-    json: JSON.stringify({
-      pri: { pageSize: 30, ...params },
-      pub: netWebAndHeader()
-    })
-  })
+  return await Service.post('/call/412.do', { pageSize: 30, ...params })
 }
-/**
- * WebAndPre 章节预加载
- * @param bookId
- * @param chapterId
- */
-export const netVideoPre = debounce(200, (bookId: string, chapterId: string) => {
-  console.log('-----------WebAndPre 章节预加载-----------', chapterId)
-  if (WebApi && WebApi.WebAndPre) {
-    netHiveLog('WebAndPre', { bookId, chapterId })
-    WebApi.WebAndPre(JSON.stringify({ bookId, chapterId }))
-  }
-})
+
 
 /**
  * WebAndSelect 章节选择
@@ -94,7 +80,6 @@ export const netVideoPre = debounce(200, (bookId: string, chapterId: string) => 
 export const netWebAndSelect = (bookId: string, chapterId: string) => {
   console.log('-----------WebAndSelect 章节选择-----------', chapterId)
   if (WebApi && WebApi.WebAndSelect) {
-    netHiveLog('WebAndSelect', { bookId, chapterId })
     WebApi.WebAndSelect(JSON.stringify({ bookId, chapterId }))
   }
 }
@@ -107,7 +92,6 @@ export const netWebAndSelect = (bookId: string, chapterId: string) => {
 export const netWebAndEnd = (bookId: string, chapterId: string) => {
   console.log('-----------WebAndEnd H5选择推荐剧集-----------', bookId, chapterId)
   if (WebApi && WebApi.WebAndEnd) {
-    netHiveLog('WebAndEnd', { bookId, chapterId })
     WebApi.WebAndEnd(JSON.stringify({ bookId, chapterId }))
   }
 }
@@ -119,7 +103,6 @@ export const netWebAndEnd = (bookId: string, chapterId: string) => {
 export const netDrama = (bookId: string) => {
   console.log('-----------WebAndDrama 加入书架-----------')
   if (WebApi && WebApi.WebAndDrama) {
-    netHiveLog('WebAndDrama', { bookId })
     WebApi.WebAndDrama(JSON.stringify({ bookId }))
   }
 }
@@ -132,7 +115,6 @@ export const netWebAndLog = (data: IWebAndLogParam) => {
   console.log('-----------WebAndLog 打点-----------', data.type)
   if (WebApi && WebApi.WebAndLog) {
     WebApi.WebAndLog(JSON.stringify(data))
-    netHiveLog('WebAndLog', { ...data })
   }
 }
 
@@ -142,7 +124,6 @@ export const netWebAndLog = (data: IWebAndLogParam) => {
 export const netLeave = () => {
   console.log('-----------closePage 关闭客户端播放器页面-----------')
   if (WebApi && WebApi.closePage) {
-    netHiveLog('closePage')
     WebApi.closePage()
   }
 }
@@ -153,7 +134,6 @@ export const netLeave = () => {
 export const netWebAndPay = (bookId: string, chapterId: string) => {
   console.log('-----------WebAndPay 唤起付费弹框-----------', chapterId)
   if (WebApi && WebApi.WebAndPay && !ChaptersModule.isPayVisible) {
-    netHiveLog('WebAndPay', { bookId, chapterId })
     WebApi.WebAndPay(JSON.stringify({ bookId, chapterId }))
     ChaptersModule.SetIsPayVisible(true)
   }
@@ -165,11 +145,5 @@ export const netWebAndPay = (bookId: string, chapterId: string) => {
  */
 export const netRecommendBook = async (bookId: string): Promise<INetVideoSourceRes> => {
   console.log('-----------S 推荐书籍-----------')
-  return await fetchGet(BASEURL + '/asg/portal.do', {
-    call: 413,
-    json: JSON.stringify({
-      pri: { bookId },
-      pub: netWebAndHeader()
-    })
-  })
+  return await Service.post('/call/413.do', { bookId })
 }

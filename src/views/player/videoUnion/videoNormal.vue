@@ -23,8 +23,8 @@
 </template>
 
 <script lang="ts" setup>
-import VideoControl from '@/components/videoUnion/videoControl.vue'
-import LoadingNormal from '@/components/controlPage/loadingNormal.vue'
+import VideoControl from '@/views/player/videoUnion/videoControl.vue'
+import LoadingNormal from '@/components/loadingNormal.vue'
 import {
   ref,
   defineComponent,

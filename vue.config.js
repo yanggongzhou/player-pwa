@@ -44,6 +44,21 @@ module.exports = defineConfig({
           "purpose": "maskable"
         }
       ]
+      // "theme_color": "white",
+      // "display": "standalone",
+      // "start_url": "./index.html",
+      // "background_color": "#3367D6",
+      // "id": "index.html",
+      // "shortcuts": [
+      //   {
+      //     "name": "How's weather today?",
+      //     "short_name": "Today",
+      //     "description": "View weather information for today",
+      //     "url": "index.html",
+      //     "icons": [{ "src": "./img/icons/manifest-icon-192.maskable.png", "sizes": "192x192" }]
+      //   }
+      // ],
+      // "description": "Weather forecast information"
     },
     //
     // 图标
@@ -74,7 +89,13 @@ module.exports = defineConfig({
       })
     ]
   },
-  productionSourceMap: false,
+  productionSourceMap: false, // 生产环境是否生成 sourceMap 文件
+  css: { // css相关配置
+    extract: true, // 是否使用css分离插件 ExtractTextPlugin
+    sourceMap: false, // 开启 CSS source maps?
+    loaderOptions: {}, // css预设器配置项
+    requireModuleExtension: true // 启用 CSS modules for all css / pre-processor files.
+  },
   lintOnSave: false,
   chainWebpack: (config) => {
     // 解决警告You are running the esm-bundler build of vue-i18n. It is recommended to configure your bundler to explicitly replace feature flag globals with boolean literals to get proper tree-shaking in the final bundle.
@@ -87,5 +108,12 @@ module.exports = defineConfig({
   devServer: {
     // server: 'https',
     port: 8000,
+    proxy: {
+      '/asg/portal': {
+        // target: 'http://192.168.8.142:8080', // 后端
+        target: 'http://192.168.0.241:4080',
+        changeOrigin: true, // 是否跨域
+      }
+    },
   }
 })

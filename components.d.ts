@@ -7,19 +7,13 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    BackTitle: typeof import('./src/components/controlPage/backTitle.vue')['default']
-    CatalogNormal: typeof import('./src/components/catalog/catalogNormal.vue')['default']
-    CatalogPopup: typeof import('./src/components/catalog/catalogPopup.vue')['default']
-    CatalogTabs: typeof import('./src/components/catalog/catalogTabs.vue')['default']
-    EndingNormal: typeof import('./src/components/controlPage/endingNormal.vue')['default']
+    BackTitle: typeof import('./src/components/backTitle.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    LoadingCircle: typeof import('./src/components/controlPage/loadingCircle.vue')['default']
-    LoadingNormal: typeof import('./src/components/controlPage/loadingNormal.vue')['default']
-    NetworkErr: typeof import('./src/components/controlPage/networkErr.vue')['default']
-    OperationTip: typeof import('./src/components/controlPage/operationTip.vue')['default']
+    LoadingCircle: typeof import('./src/components/loadingCircle.vue')['default']
+    LoadingNormal: typeof import('./src/components/loadingNormal.vue')['default']
+    NetworkErr: typeof import('./src/components/networkErr.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    UnLock: typeof import('./src/components/controlPage/unLock.vue')['default']
     VanCountDown: typeof import('vant/es')['CountDown']
     VanLoading: typeof import('vant/es')['Loading']
     VanPopup: typeof import('vant/es')['Popup']
@@ -27,8 +21,5 @@ declare module '@vue/runtime-core' {
     VanSwipeItem: typeof import('vant/es')['SwipeItem']
     VanTab: typeof import('vant/es')['Tab']
     VanTabs: typeof import('vant/es')['Tabs']
-    VideoControl: typeof import('./src/components/videoUnion/videoControl.vue')['default']
-    VideoNormal: typeof import('./src/components/videoUnion/videoNormal.vue')['default']
-    VideoSwiper: typeof import('./src/components/videoUnion/videoSwiper.vue')['default']
   }
 }

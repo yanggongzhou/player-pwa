@@ -9,13 +9,11 @@ import { IChapterInfo } from '@/types/player.interface'
 import { DeviceModule } from '@/store/modules/device'
 import { ChaptersModule } from '@/store/modules/chapters'
 import { EAutoAdd } from '@/types/common.interface'
-import { netHiveLog, netIP } from '@/api/clientLog'
 
 // 章节预加载
 const AndWebPre = (chapterInfo: IChapterInfo) => {
   console.log('-----------AndWebPre 章节预加载数据返回-----------', chapterInfo)
   ChaptersModule.RefreshChapterAllList(chapterInfo.chapterId)
-  netHiveLog('AndWebPre', { chapterId: chapterInfo.chapterId, chapterName: chapterInfo.chapterName })
   if (DeviceModule.isPrevRefresh) {
     AppModule.RefreshVideoSource({
       bookInfo: AppModule.bookInfo, chapterInfo
@@ -28,7 +26,6 @@ const AndWebPre = (chapterInfo: IChapterInfo) => {
 // 选择对应章节
 const AndWebSelect = (chapterInfo: IChapterInfo) => {
   console.log('-----------AndWebSelect 选择章节返回数据-----------', chapterInfo)
-  netHiveLog('AndWebSelect', { chapterId: chapterInfo.chapterId, chapterName: chapterInfo.chapterName })
   AppModule.RefreshSelectSource({
     bookInfo: AppModule.bookInfo, chapterInfo
   })
@@ -37,7 +34,6 @@ const AndWebSelect = (chapterInfo: IChapterInfo) => {
 // 安卓手势返回 & 手机底部按钮返回
 const AndWebQuit = () => {
   console.log('-----------AndWebQuit 手势返回 & 手机底部按钮返回-----------')
-  netHiveLog('AndWebQuit', { action: 3, autoAdd: AppModule.bookInfo.autoAdd })
   if (ChaptersModule.isCatalogPopupVisible) {
     ChaptersModule.SetIsCatalogPopupVisible(false)
     return
@@ -70,13 +66,11 @@ const updateOfflineStatus = () => {
 }
 
 onBeforeMount(() => {
-  netIP()
   window.AndWebQuit = AndWebQuit // 安卓手势返回 & 手机底部按钮返回
   window.AndWebPre = AndWebPre as any // 章节预加载
   window.onResume = onResume // H5页面可读时客户端调用
   window.AndWebSelect = AndWebSelect as any // 选择章节数据
   console.log('-----------播放器启动---bookSotre-------', window.bookSotre)
-  netHiveLog('app_launch', { action: 1 })
   // 初始化数据
   AppModule.InitVideoSource()
   // 监听网络

@@ -37,15 +37,14 @@
 
 <script lang="ts" setup>
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
-import VideoNormal from '@/components/videoUnion/videoNormal.vue'
+import VideoNormal from '@/views/player/videoUnion/videoNormal.vue'
 import { AppModule } from '@/store/modules/app'
 import { EChapterStatus, EIsPay } from '@/types/common.interface'
-import UnLock from '@/components/controlPage/unLock.vue'
+import UnLock from '@/views/player/controlPage/unLock.vue'
 import { netWebAndPay } from '@/api/player'
 import { IBookInfo, IChapterInfo } from '@/types/player.interface'
 import type { SwipeInstance } from 'vant'
 import { ChaptersModule } from '@/store/modules/chapters'
-import { netHiveLog } from '@/api/clientLog'
 import { DeviceModule } from '@/store/modules/device'
 import { imgError } from '@/utils/imgError'
 import playerBus from '@/utils/playerBus'
@@ -81,10 +80,8 @@ const videoEnd = () => {
   }
 }
 const videoError = ({ networkState, chapterId }: {networkState: videojs.NetworkState, chapterId: string}) => {
-  netHiveLog('videoError', { networkState, chapterId, bookId: AppModule.bookInfo.bookId })
 }
 const videoStageState = (data: any) => {
-  netHiveLog('videoStageState', { ...data, bookId: AppModule.bookInfo.bookId })
 }
 // 上下屏切换
 const onChange = (index: number) => {
@@ -98,7 +95,6 @@ const AndWebPay = async ({
   chapterInfo
 }: { isPay: EIsPay, bookInfo: IBookInfo, chapterInfo?: IChapterInfo }) => {
   console.log('-------------AndWebPay 关闭付费窗口-----------------', isPay, bookInfo, chapterInfo)
-  netHiveLog('AndWebPay', { isPay, chapterId: chapterInfo && chapterInfo.chapterId, chapterName: chapterInfo && chapterInfo.chapterName })
   ChaptersModule.SetIsPayVisible(false)
   bookInfo && AppModule.SetBookInfo(bookInfo)
   if (isPay === EIsPay.否) {

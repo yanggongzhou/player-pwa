@@ -146,7 +146,7 @@ class App extends VuexModule implements IAppState {
 
   @Action({ rawError: true })
   public async InitVideoSource () { // 初始化书籍
-    const data = netVideoSource()
+    const data = await netVideoSource()
     if (!data) return;
     if (data.isSimplified !== undefined) {
       const { locale } = useI18n()

@@ -26,7 +26,7 @@
 import IconClose from '@/assets/images/close.png'
 import { computed } from 'vue'
 import { EBookFinishStatus } from '@/types/common.interface'
-import CatalogTabs from '@/components/catalog/catalogTabs.vue'
+import CatalogTabs from '@/views/player/catalog/catalogTabs.vue'
 import { ChaptersModule } from '@/store/modules/chapters'
 import { AppModule } from '@/store/modules/app'
 

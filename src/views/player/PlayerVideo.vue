@@ -19,12 +19,12 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { netVideoPre } from '@/api/player'
-import VideoSwiper from '@/components/videoUnion/videoSwiper.vue'
-import CatalogNormal from '@/components/catalog/catalogNormal.vue'
+import VideoSwiper from '@/views/player/videoUnion/videoSwiper.vue'
+import CatalogNormal from '@/views/player/catalog/catalogNormal.vue'
 import { Toast } from 'vant'
-import BackTitle from '@/components/controlPage/backTitle.vue'
-import NetworkErr from '@/components/controlPage/networkErr.vue'
-import EndingNormal from '@/components/controlPage/endingNormal.vue'
+import BackTitle from '@/components/backTitle.vue'
+import NetworkErr from '@/components/networkErr.vue'
+import EndingNormal from '@/views/player/controlPage/endingNormal.vue'
 import { AppModule } from '@/store/modules/app'
 import { DeviceModule } from '@/store/modules/device'
 import { ChaptersModule } from '@/store/modules/chapters'
@@ -32,7 +32,7 @@ import { EChapterStatus, EIsCharge } from '@/types/common.interface'
 import { IChapterInfo } from '@/types/player.interface'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'throttle-debounce'
-import OperationTip from '@/components/controlPage/operationTip.vue'
+import OperationTip from '@/views/player/controlPage/operationTip.vue'
 
 const isShowOperationTip = computed(() => DeviceModule.isShowOperationTip);
 const { t } = useI18n()

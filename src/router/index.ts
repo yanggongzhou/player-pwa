@@ -1,30 +1,30 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { App } from 'vue';
 import { createRouterGuards } from '@/router/router-guards';
-import PlayerVideo from '@/views/PlayerVideo.vue'
-
-const constantFiles = require.context('./constantModules', true, /\.ts$/)
-let constantModules: Array<RouteRecordRaw> = []
-constantFiles.keys().forEach((key) => {
-  if (key === './index.ts') return
-  constantModules = constantModules.concat(constantFiles(key).default)
-})
+import PlayerVideo from '@/views/player/PlayerVideo.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'player',
-    component: PlayerVideo
-  },
-  {
-    path: '/home',
-    name: 'home',
+    name: 'theater',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/HomeView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '@/views/theater/Theater.vue')
   },
-  ...constantModules
+  {
+    path: '/player',
+    name: 'player',
+    component: PlayerVideo
+  },
+  // {
+  //   path: '/theater',
+  //   name: 'theater',
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () => import(/* webpackChunkName: "about" */ '@/views/theater/Theater.vue')
+  // },
 ]
 
 const router = createRouter({
