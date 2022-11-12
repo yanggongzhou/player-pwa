@@ -46,8 +46,7 @@ import { ChaptersModule } from '@/store/modules/chapters'
 import { DeviceModule } from '@/store/modules/device'
 import { imgError } from '@/utils/imgError'
 import playerBus from '@/utils/playerBus'
-import videojs from 'video.js'
-// import { debounce } from 'throttle-debounce'
+
 const swipeRef = ref<SwipeInstance>({} as SwipeInstance)
 const swipeIndex = computed(() => AppModule.swipeIndex)
 const swipeList = computed(() => AppModule.swipeList)

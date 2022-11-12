@@ -9,7 +9,6 @@ module.exports = defineConfig({
     name: 'Dz Theater', // 名字
     themeColor: "#373737", // 背景颜色
     appleMobileWebAppCapable: true, // 苹果WebApp支持
-    // manifestPath: 'public/manifest.json',
     // // manifest 设置
     manifestOptions: {
       name: '点众剧场',
@@ -18,55 +17,29 @@ module.exports = defineConfig({
       start_url: ".",
       display: "standalone",
       background_color: "#000000",
-      icons: [
-        {
-          "src": "img/icons/manifest-icon-192.maskable.png",
-          "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "any"
-        },
-        {
-          "src": "img/icons/manifest-icon-192.maskable.png",
-          "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "maskable"
-        },
-        {
-          "src": "img/icons/manifest-icon-512.maskable.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any"
-        },
-        {
-          "src": "img/icons/manifest-icon-512.maskable.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "maskable"
-        }
-      ]
       // "theme_color": "white",
       // "display": "standalone",
       // "start_url": "./index.html",
       // "background_color": "#3367D6",
       // "id": "index.html",
-      // "shortcuts": [
-      //   {
-      //     "name": "How's weather today?",
-      //     "short_name": "Today",
-      //     "description": "View weather information for today",
-      //     "url": "index.html",
-      //     "icons": [{ "src": "./img/icons/manifest-icon-192.maskable.png", "sizes": "192x192" }]
-      //   }
-      // ],
-      // "description": "Weather forecast information"
+      "shortcuts": [
+        {
+          "name": "How's weather today?",
+          "short_name": "Today",
+          "description": "View weather information for today",
+          // "url": "index.html",
+          "icons": [{ "src": "./img/icons/manifest-icon-192.maskable.png", "sizes": "192x192" }]
+        }
+      ],
+      "description": "Weather forecast information"
     },
     //
     // 图标
     iconPaths: {
-      faviconSVG: 'img/icons/manifest-icon-192.maskable.png',
-      favicon32: 'img/icons/manifest-icon-512.maskable.png',
-      favicon16: 'img/icons/manifest-icon-192.maskable.png',
-      appleTouchIcon: 'img/icons/apple-icon.png',
+      faviconSVG: "img/logo.png", // 'img/icons/manifest-icon-192.maskable.png',
+      favicon32: "img/logo.png", // 'img/icons/manifest-icon-512.maskable.png',
+      favicon16: "img/logo.png", // 'img/icons/manifest-icon-192.maskable.png',
+      appleTouchIcon: "img/logo.png", // 'img/icons/apple-icon.png',
       maskIcon: '',
       msTileImage: ''
     },
