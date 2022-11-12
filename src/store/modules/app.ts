@@ -7,7 +7,6 @@ import { EAutoAdd, EBookFinishStatus, EChapterStatus, EIsCharge, EIsSimplified }
 import { ChaptersModule } from '@/store/modules/chapters'
 import { useI18n } from 'vue-i18n'
 import { DeviceModule } from '@/store/modules/device'
-import playerBus from '@/utils/playerBus'
 
 @Module({
   dynamic: true,
@@ -49,14 +48,13 @@ class App extends VuexModule implements IAppState {
 
   @Mutation
   private ADD_SWIPELIST (info: IChapterInfo) {
-    const isNextChapter = this.swipeList[this.swipeList.length - 1].chapterIndex + 1 === info.chapterIndex // 是否是下一章
     const isExistInfo = this.swipeList.find(val => val.chapterId === info.chapterId) // 是否存在
     const _info = JSON.parse(JSON.stringify(info))
     if (ChaptersModule.chapterAllList.length > 0) {
       const chapterItem = ChaptersModule.chapterAllList.find(catalog => catalog.chapterId === info.chapterId)
       if (chapterItem) _info.chapterIndex = chapterItem.chapterIndex;
     }
-    if (isNextChapter && !isExistInfo) {
+    if (!isExistInfo) {
       this.swipeList = this.swipeList.concat(_info)
     }
     // 当存在且是未付费，替换付费数据
@@ -76,28 +74,8 @@ class App extends VuexModule implements IAppState {
     this.swipeIndex = index
   }
 
-  @Action // 付费后刷新swipeList, 并请求下一章节
-  public RefreshSwipeListItem (item: IChapterInfo) {
-    const _swipeList = this.swipeList.map(val => {
-      if (val.chapterId === item.chapterId) {
-        return item
-      }
-      return val
-    })
-    this.SET_SWIPELIST(_swipeList)
-    const chapterItem = this.swipeList[item.chapterIndex - 1]
-    if (chapterItem.nextChapterId) {
-      netVideoPre(this.bookInfo.bookId, chapterItem.nextChapterId)
-    }
-  }
-
   @Action({ rawError: true })
-  public SetSwipeIndex (index: number) {
-    if (!this.swipeList[index] || !this.swipeList[index].chapterIndex) { // 9版本一下
-      this.SET_SWIPEINDEX(this.swipeIndex)
-      playerBus.emit('jumpSwipe', this.swipeIndex)
-      return
-    }
+  public async SetSwipeIndex (index: number) {
     this.SET_SWIPEINDEX(index)
     console.log('SetSwipeIndex-------------->', index)
     // 切换swipe时判断是否还展示追剧按钮
@@ -107,12 +85,8 @@ class App extends VuexModule implements IAppState {
     if (this.isShowEndPage) {
       this.SetIsShowEndPage(false)
     }
-    // if (index === this.swipeList.length - 1) {
     if (ChaptersModule.chapterAllList.length === 0) return
     const chapterInfo = ChaptersModule.chapterAllList[this.swipeList[index].chapterIndex - 1]
-    if (chapterInfo.chapterIndex === ChaptersModule.totalChapters) {
-      return false
-    }
     const nextChapter = ChaptersModule.chapterAllList[chapterInfo.chapterIndex]
     // 判断下一集是否付费，付费塞付费部分数据
     if (nextChapter.isCharge === EIsCharge.收费) {
@@ -123,9 +97,10 @@ class App extends VuexModule implements IAppState {
         chapterName: nextChapter.chapterName
       })
     } else {
-      netVideoPre(this.bookInfo.bookId, nextChapter.chapterId)
+      const data = await netVideoPre(this.bookInfo.bookId, nextChapter.chapterId)
+      if (!data) return;
+      this.AddSwipeList(data.chapterInfo)
     }
-    // }
   }
 
   @Action({ rawError: true }) // 添加swipe数据
@@ -184,10 +159,9 @@ class App extends VuexModule implements IAppState {
   }
 
   @Action({ rawError: true }) // 选择章节更新书籍
-  public RefreshSelectSource ({ bookInfo = {} as IBookInfo, chapterInfo = {} as IChapterInfo }: INetVideoSourceRes) {
-    ChaptersModule.SetIsShowDrama(bookInfo.autoAdd === EAutoAdd.否)
+  public RefreshSelectSource (chapterInfo: IChapterInfo) {
+    ChaptersModule.SetIsShowDrama(this.bookInfo.autoAdd === EAutoAdd.否)
     this.SetIsShowEndPage(false)
-    this.SetBookInfo(bookInfo)
     this.SET_SWIPELIST([chapterInfo])
     this.SetSwipeIndex(0)
     if (ChaptersModule.chapterAllList.length === 0) return
@@ -197,12 +171,12 @@ class App extends VuexModule implements IAppState {
     const nextChapter = ChaptersModule.chapterAllList[chapterIndex]
     // 判断下一集是否付费，付费塞付费部分数据
     if (nextChapter.isCharge === EIsCharge.收费) {
-      netVideoPre(this.bookInfo.bookId, nextChapter.chapterId)
+      // netVideoPre(this.bookInfo.bookId, nextChapter.chapterId)
     }
   }
 
   @Action({ rawError: true }) // 支付完成后刷新数据
-  public RefreshPaySource (chapterInfo: IChapterInfo) {
+  public async RefreshPaySource (chapterInfo: IChapterInfo) {
     this.SET_SWIPELIST([chapterInfo])
     this.SET_SWIPEINDEX(0)
     if (ChaptersModule.chapterAllList.length === 0 || chapterInfo.chapterIndex === ChaptersModule.totalChapters) return
@@ -216,7 +190,9 @@ class App extends VuexModule implements IAppState {
         chapterName: nextChapter.chapterName
       })
     }
-    netVideoPre(this.bookInfo.bookId, nextChapter.chapterId)
+    const data = await netVideoPre(this.bookInfo.bookId, nextChapter.chapterId)
+    if (!data) return;
+    this.AddSwipeList(data.chapterInfo)
   }
 }
 

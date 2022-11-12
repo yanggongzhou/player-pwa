@@ -35,7 +35,7 @@ import IconUnLock from '@/assets/images/unlock.png'
 import { EChapterStatus, EIsCharge } from '@/types/common.interface'
 import { ICatalogListItem } from '@/types/player.interface'
 import { AppModule } from '@/store/modules/app'
-import { netWebAndSelect } from '@/api/player'
+import { netVideoPre } from '@/api/player'
 import { getTabs } from '@/utils/getTabs'
 import { debounce } from 'throttle-debounce'
 
@@ -54,7 +54,7 @@ const changeTab = (index: number) => {
 
 const tabData = computed(() => getTabs(30, totalChapters.value))
 
-const selectChapter = debounce(300, (chapter: ICatalogListItem) => {
+const selectChapter = debounce(300, async (chapter: ICatalogListItem) => {
   if (chapter.isCharge === EIsCharge.收费) {
     AppModule.RefreshVideoSource({
       bookInfo: AppModule.bookInfo,
@@ -67,7 +67,9 @@ const selectChapter = debounce(300, (chapter: ICatalogListItem) => {
     })
   } else {
     console.log('-----------选择章节-----------', chapter.chapterId)
-    netWebAndSelect(AppModule.bookInfo.bookId, chapter.chapterId)
+    const data = await netVideoPre(AppModule.bookInfo.bookId, chapter.chapterId)
+    if (!data) return;
+    AppModule.RefreshSelectSource(data.chapterInfo)
   }
   ChaptersModule.SetIsCatalogPopupVisible(false)
 })

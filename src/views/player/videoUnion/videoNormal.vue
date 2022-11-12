@@ -34,12 +34,10 @@ import {
 } from 'vue'
 import { VideoPlayer } from 'vue-video-player'
 import { IChapterInfo } from '@/types/player.interface'
-import { netWebAndLog } from '@/api/player'
 import { DeviceModule } from '@/store/modules/device'
 import { AppModule } from '@/store/modules/app'
 import { ChaptersModule } from '@/store/modules/chapters'
 import { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
-import { throttle } from 'throttle-debounce'
 
 defineComponent({
   VideoPlayer
@@ -57,7 +55,7 @@ interface IProps {
 }
 const props = defineProps<IProps>()
 // 运行时
-const emits = defineEmits(['videoEnd', 'videoStageState', 'videoError'])
+const emits = defineEmits(['videoEnd'])
 // // 基于类型
 // const emits = defineEmits<{(e: 'videoEnd'): void;}>()
 
@@ -90,13 +88,13 @@ const options = reactive<VideoJsPlayerOptions>({
 })
 
 // 是否暂停视频
-watch(() => [DeviceModule.isPrevRefresh, AppModule.isShowEndPage, props.isShowPage, DeviceModule.isOnline, ChaptersModule.isPayVisible],
-  ([isPrevRefresh, isShowEndPage, isShowPage, isOnline, isPayVisible]) => {
+watch(() => [AppModule.isShowEndPage, props.isShowPage, DeviceModule.isOnline, ChaptersModule.isPayVisible],
+  ([isShowEndPage, isShowPage, isOnline, isPayVisible]) => {
     // 是否暂停视频
     // const isPlaying = videoInstance.value.paused && !videoInstance.value.paused()
     const isPlaying = true
     // 监听是否显示全局形式loading
-    const isPageLoading = isPrevRefresh && isShowPage && !isShowEndPage
+    const isPageLoading = isShowPage && !isShowEndPage
     if (isPageLoading) {
       isLoading.value = true
     }
@@ -144,8 +142,6 @@ const dragProgress = (progressValue: number) => {
   if (props.isShowPage && !AppModule.isShowEndPage && videoInstance.value.paused && videoInstance.value.paused()) {
     videoInstance.value.play()
   }
-  videoStageStateData.dragCount += 1
-  dragDurationTime.value = new Date().getTime();
 }
 // 是否显示封面
 const isShowPoster = ref(true)
@@ -157,34 +153,14 @@ const onCanplay = (ev: { target: { player: VideoJsPlayer } }) => {
   if (props.isShowPage && videoInstance.value.paused && videoInstance.value.paused()) {
     videoInstance.value.play()
   }
-  const nowTime = new Date().getTime()
-  if (dragDurationTime.value > 0) {
-    videoStageStateData.dragWaitTimeDifference += waitDurationTime.value - dragDurationTime.value;
-    videoStageStateData.dragDuration += nowTime - dragDurationTime.value
-    dragDurationTime.value = 0;
-  }
-  if (waitDurationTime.value > 0) {
-    videoStageStateData.waitDuration += nowTime - waitDurationTime.value
-    waitDurationTime.value = 0;
-  }
 }
 const onPlay = () => {
   isShowStop.value = false
-  videoStageStateData.playCount += 1;
 }
 const onPause = () => {
   isShowStop.value = true
-  videoStageStateData.pausedCount += 1;
 }
 const onEnded = () => {
-  netWebAndLog({
-    type: 'readplayletEnd',
-    item_id: AppModule.bookInfo.bookId,
-    chapter_word_number: duration.value,
-    chapter_number: props.chapterInfo.chapterIndex,
-    chapter_name: props.chapterInfo.chapterName,
-    chapter_id: props.chapterInfo.chapterId
-  })
   // 剧集播放完毕
   if (ChaptersModule.totalChapters > 0 && props.chapterInfo.chapterIndex === ChaptersModule.totalChapters) {
     AppModule.SetIsShowEndPage(true)
@@ -198,65 +174,24 @@ const onTimeupdate = (ev: { target: { player: VideoJsPlayer } }) => {
     duration.value = player.duration()
   }
 
-  if (player.bufferedEnd() - player.currentTime() < 2) {
-    addBufferedEndCurrentTimeCount()
-  }
-
   if (player.currentTime() > 0 && isShowPoster.value) {
     DeviceModule.SetReadChapterList(props.chapterInfo.chapterId)
     isShowPoster.value = false
-    startDate.value = Math.round(new Date().getTime() / 1000);
-    netWebAndLog({
-      type: 'readplayletBegin',
-      item_id: AppModule.bookInfo.bookId,
-      chapter_word_number: duration.value,
-      chapter_number: props.chapterInfo.chapterIndex,
-      chapter_name: props.chapterInfo.chapterName,
-      chapter_id: props.chapterInfo.chapterId
-    })
   }
   progress.value = Math.floor(player.currentTime() / duration.value * 100)
 }
 // 加载loading显示
 const onWaiting = () => {
   isLoading.value = true
-  videoStageStateData.waitCount += 1;
-  waitDurationTime.value = new Date().getTime();
 }
 // 错误处理
-const onErrorEve = (ev: { target: { player: VideoJsPlayer } }) => {
+const onErrorEve = () => {
   if (!DeviceModule.isOnline) {
     DeviceModule.SetIsNeedReload(true);
   }
-  emits('videoError', {
-    networkState: ev.target.player.networkState && ev.target.player.networkState(),
-    chapterId: props.chapterInfo.chapterId,
-  })
 }
-const startDate = ref(Math.round(new Date().getTime() / 1000))
-const waitDurationTime = ref(0)
-const dragDurationTime = ref(0)
-const videoStageStateData = reactive({
-  waitCount: 0,
-  waitDuration: 0,
-  dragWaitTimeDifference: 0,
-  dragCount: 0,
-  dragDuration: 0,
-  pausedCount: 0,
-  playCount: 0,
-  bufferedEndCurrentTimeCount: 0
-})
-const addBufferedEndCurrentTimeCount = throttle(5000, () => {
-  videoStageStateData.bufferedEndCurrentTimeCount += 1
-})
+
 onBeforeUnmount(() => {
-  emits('videoStageState', {
-    chapterId: props.chapterInfo.chapterId,
-    ...videoStageStateData,
-    leaveCurrentTime: videoInstance.value.currentTime ? videoInstance.value.currentTime() : 0,
-    startDate: startDate.value,
-    endDate: Math.round(new Date().getTime() / 1000)
-  })
   videoInstance.value.pause && videoInstance.value.pause()
   videoInstance.value.dispose && videoInstance.value.dispose()
 })

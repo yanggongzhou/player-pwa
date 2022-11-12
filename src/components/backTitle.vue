@@ -26,9 +26,11 @@ import { AppModule } from '@/store/modules/app'
 import { DeviceModule } from '@/store/modules/device'
 import { netDrama } from '@/api/player'
 import { ChaptersModule } from '@/store/modules/chapters'
+import { useRouter } from 'vue-router'
 const chapterName = computed(() => AppModule.swipeList.length > 0 ? `第${AppModule.swipeList[AppModule.swipeIndex].chapterIndex}集` : '')
 const bookInfo = computed(() => AppModule.bookInfo)
 const isRetain = computed(() => DeviceModule.isRetain)
+const router = useRouter()
 // 退出播放器
 const routeBack = () => {
   if (ChaptersModule.isCatalogPopupVisible) {
@@ -38,19 +40,19 @@ const routeBack = () => {
   if (bookInfo.value.autoAdd === EAutoAdd.否) {
     DeviceModule.SetIsRetain(true)
   } else {
-    DeviceModule.ToLeavePlayer()
+    router.replace('theater')
   }
 }
 
 const onCancel = () => {
   DeviceModule.SetIsRetain(false)
-  DeviceModule.ToLeavePlayer()
+  router.replace('theater')
 }
 
 const onConfirm = () => {
   DeviceModule.SetIsRetain(false)
   netDrama(AppModule.bookInfo.bookId)
-  DeviceModule.ToLeavePlayer()
+  router.replace('theater')
 }
 
 const onCancelX = () => {
@@ -64,14 +66,13 @@ const onCancelX = () => {
   position: relative;
   z-index: 999;
   width: 100%;
-  height: 1.4rem;
-  background-color: #0F0F0F
+  height: 1rem;
+  background-color: #0F0F0F;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
 .backWrap {
-  position: absolute;
-  top: 0.7rem;
-  left: 0;
-  z-index: 1;
   width: 3rem;
   display: flex;
   align-items: center;

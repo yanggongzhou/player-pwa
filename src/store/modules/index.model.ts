@@ -14,7 +14,6 @@ export interface IDeviceState {
   headerData: {[key: string]: any}
   readingStartTime: number;
   readChapterList: string[];
-  isPrevRefresh: boolean;
   isRetain: boolean;
   isShowUnlockTip: boolean;
   isShowOperationTip: boolean; // 是否显示新手引导提示

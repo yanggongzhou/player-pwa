@@ -57,10 +57,11 @@ const onRefresh = async () => {
       })
     }
   } else {
-    if (!DeviceModule.isPrevRefresh) {
-      DeviceModule.SetIsPrevRefresh(true)
-      netVideoPre(AppModule.bookInfo.bookId, preChapter.chapterId)
-    }
+    const data = await netVideoPre(AppModule.bookInfo.bookId, preChapter.chapterId)
+    if (!data) return;
+    AppModule.RefreshVideoSource({
+      bookInfo: AppModule.bookInfo, chapterInfo: data.chapterInfo
+    })
   }
 }
 
@@ -87,7 +88,7 @@ const playTouchmove = debounce(500, (e: TouchEvent) => {
   }
 })
 
-const onNextChapter = () => {
+const onNextChapter = async () => {
   const nextChapter = ChaptersModule.chapterAllList[chapterInfo.value.chapterIndex]
   if (!nextChapter || !nextChapter.chapterId || chapterInfo.value.chapterIndex === ChaptersModule.totalChapters) return
   if (nextChapter.isCharge === EIsCharge.收费) {
@@ -104,10 +105,9 @@ const onNextChapter = () => {
       })
     }
   } else {
-    if (!DeviceModule.isPrevRefresh) {
-      DeviceModule.SetIsPrevRefresh(true)
-      netVideoPre(AppModule.bookInfo.bookId, nextChapter.chapterId)
-    }
+    const data = await netVideoPre(AppModule.bookInfo.bookId, nextChapter.chapterId)
+    if (!data) return
+    AppModule.AddSwipeList(data.chapterInfo)
   }
 }
 

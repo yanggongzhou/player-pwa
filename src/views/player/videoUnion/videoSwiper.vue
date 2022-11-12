@@ -26,8 +26,6 @@
           :is-show-page="ind === swipeIndex"
           :chapter-info="val"
           @videoEnd="videoEnd"
-          @videoError="videoError"
-          @videoStageState="videoStageState"
         />
         <img v-if="swipeIndex !==ind && val.chapterUrl" class="posterImg" :src="val.chapterUrl" @error="imgError" alt="">
       </template>
@@ -79,10 +77,7 @@ const videoEnd = () => {
     swipeRef.value.next()
   }
 }
-const videoError = ({ networkState, chapterId }: {networkState: videojs.NetworkState, chapterId: string}) => {
-}
-const videoStageState = (data: any) => {
-}
+
 // 上下屏切换
 const onChange = (index: number) => {
   AppModule.SetSwipeIndex(index)
@@ -113,7 +108,6 @@ const jumpSwipe = (swipeIndex: number) => {
 }
 
 onBeforeMount(() => {
-  window.AndWebPay = AndWebPay as any
   playerBus.on('jumpSwipe', jumpSwipe as any);
 })
 

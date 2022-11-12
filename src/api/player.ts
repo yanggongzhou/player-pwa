@@ -1,11 +1,7 @@
 import { ICatalogParams, INetCatalogListRes, INetVideoSourceRes } from '@/types/player.interface'
-import { EAutoAdd, EChapterStatus, IWebAndLogParam } from '@/types/common.interface'
-import { ChaptersModule } from '@/store/modules/chapters'
+import { EAutoAdd, EChapterStatus } from '@/types/common.interface'
 import { DeviceModule } from '@/store/modules/device'
-import { debounce } from 'throttle-debounce'
 import Service, { BASEURL } from '@/utils/request'
-
-const WebApi = window.bookSotre
 
 // export const BASEURL = process.env.NODE_ENV === "production" ? BaseUrlEnvironment.staging : BaseUrlEnvironment.test
 console.log('-----------BASEURL----------->', BASEURL)
@@ -41,23 +37,22 @@ export const netVideoSource = async (book_id = '41000000003', chapter_id = ''): 
 
 /**
  * WebAndPre 章节预加载 236
- * @param bookId
- * @param chapterId
+ * @param book_id
+ * @param chapter_id
  */
-export const netVideoPre = debounce(200, async (book_id: string, chapter_id: string) => {
+export const netVideoPre = async (book_id: string, chapter_id: string): Promise<INetVideoSourceRes | void> => {
   console.log('-----------章节预加载-----------', chapter_id)
   return await netVideoSource(book_id, chapter_id)
-})
+}
 /**
  * 获取客户端请求头
  */
 export const netWebAndHeader = () => {
-  if (JSON.stringify(DeviceModule.headerData) === '{}' || Object.keys(DeviceModule.headerData).length === 0) {
-    console.log('-----------WebAndHeader 获取客户端请求头-----------')
-    const headData = WebApi && WebApi.WebAndHeader ? JSON.parse(WebApi.WebAndHeader()) : {};
-    DeviceModule.SetHeaderData(headData)
-    return headData
-  }
+  // if (JSON.stringify(DeviceModule.headerData) === '{}' || Object.keys(DeviceModule.headerData).length === 0) {
+  //   console.log('-----------WebAndHeader 获取客户端请求头-----------')
+  //   DeviceModule.SetHeaderData(headData)
+  //   return headData
+  // }
   return DeviceModule.headerData
 }
 
@@ -71,59 +66,12 @@ export const netCatalogList = async (params: ICatalogParams): Promise<INetCatalo
 }
 
 /**
- * WebAndSelect 章节选择
- * @param bookId
- * @param chapterId
- */
-export const netWebAndSelect = (bookId: string, chapterId: string) => {
-  console.log('-----------WebAndSelect 章节选择-----------', chapterId)
-  if (WebApi && WebApi.WebAndSelect) {
-    WebApi.WebAndSelect(JSON.stringify({ bookId, chapterId }))
-  }
-}
-
-/**
- * WebAndEnd H5选择推荐剧集
- * @param bookId
- * @param chapterId
- */
-export const netWebAndEnd = (bookId: string, chapterId: string) => {
-  console.log('-----------WebAndEnd H5选择推荐剧集-----------', bookId, chapterId)
-  if (WebApi && WebApi.WebAndEnd) {
-    WebApi.WebAndEnd(JSON.stringify({ bookId, chapterId }))
-  }
-}
-
-/**
  * 加入书架
  * @param bookId 书籍id
  */
 export const netDrama = (bookId: string) => {
   console.log('-----------WebAndDrama 加入书架-----------')
-  if (WebApi && WebApi.WebAndDrama) {
-    WebApi.WebAndDrama(JSON.stringify({ bookId }))
-  }
-}
 
-/**
- * 打点
- * @param data
- */
-export const netWebAndLog = (data: IWebAndLogParam) => {
-  console.log('-----------WebAndLog 打点-----------', data.type)
-  if (WebApi && WebApi.WebAndLog) {
-    WebApi.WebAndLog(JSON.stringify(data))
-  }
-}
-
-/**
- * 关闭客户端播放器页面
- */
-export const netLeave = () => {
-  console.log('-----------closePage 关闭客户端播放器页面-----------')
-  if (WebApi && WebApi.closePage) {
-    WebApi.closePage()
-  }
 }
 
 /**
@@ -131,10 +79,10 @@ export const netLeave = () => {
  */
 export const netWebAndPay = (bookId: string, chapterId: string) => {
   console.log('-----------WebAndPay 唤起付费弹框-----------', chapterId)
-  if (WebApi && WebApi.WebAndPay && !ChaptersModule.isPayVisible) {
-    WebApi.WebAndPay(JSON.stringify({ bookId, chapterId }))
-    ChaptersModule.SetIsPayVisible(true)
-  }
+  // if (WebApi && WebApi.WebAndPay && !ChaptersModule.isPayVisible) {
+  //   WebApi.WebAndPay(JSON.stringify({ bookId, chapterId }))
+  //   ChaptersModule.SetIsPayVisible(true)
+  // }
 }
 
 /**

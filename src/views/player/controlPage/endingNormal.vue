@@ -24,7 +24,6 @@ import { EBookFinishStatus } from '@/types/common.interface'
 import { AppModule } from '@/store/modules/app'
 import { ChaptersModule } from '@/store/modules/chapters'
 import { useI18n } from 'vue-i18n'
-import { netWebAndEnd } from '@/api/player'
 
 const isEndPageVisible = computed(() => AppModule.isShowEndPage) // 结束页
 const bookFinishStatus = computed(() => AppModule.bookInfo.bookFinishStatus || 0)
@@ -46,7 +45,6 @@ const countDownFinish = async () => {
   console.log('-----------倒计时结束-----------')
   if (AppModule.isShowEndPage) {
     const data = JSON.parse(JSON.stringify(AppModule.recommendData))
-    netWebAndEnd(data.bookInfo.bookId, data.bookInfo.chapterId)
     await ChaptersModule.GetAllChapterList(data.bookInfo.bookId)
     AppModule.SetIsShowEndPage(false)
     await AppModule.RefreshVideoSource(data)
