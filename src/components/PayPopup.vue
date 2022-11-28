@@ -2,8 +2,12 @@
   <van-popup
     :show="isShowPaypal"
     round
+    closeable
     position="bottom"
+    safe-area-inset-bottom
+    :before-close="onBeforeClose"
     :style="{ height: '4.5rem' }"
+    :lazy-render="false"
   >
     <div class="paypalBox">
       <div style="font-size: 0.3rem; text-align: center; padding-bottom: 0.2rem">支付测试</div>
@@ -15,15 +19,21 @@
 <script lang="ts" setup>
 import { loadScript } from "@paypal/paypal-js";
 import { DeviceModule } from '@/store/modules/device'
-import { computed, nextTick, watch } from 'vue'
-const isShowPaypal = computed(() => DeviceModule.isShowPaypal);
+import { onMounted, ref, watch } from 'vue'
+import { Toast } from 'vant'
+
+const isShowPaypal = ref(DeviceModule.isShowPaypal);
 
 watch(() => DeviceModule.isShowPaypal, (isShow) => {
-  if (isShow) {
-    nextTick(() => {
-      loadPaypalSdk()
-    })
-  }
+  isShowPaypal.value = isShow;
+})
+
+const onBeforeClose = () => {
+  DeviceModule.SetIsShowPaypal(false);
+}
+
+onMounted(() => {
+  loadPaypalSdk()
 })
 
 const loadPaypalSdk = () => {
@@ -66,10 +76,20 @@ const loadPaypalSdk = () => {
         }
       }).render('#paypal-button-container')
         .catch((error) => {
+          DeviceModule.SetIsShowPaypal(false);
+          Toast({
+            message: error,
+            position: 'bottom'
+          })
           console.error("failed to render the PayPal Buttons", error);
         });
     })
     .catch((error) => {
+      Toast({
+        message: error,
+        position: 'bottom'
+      })
+      DeviceModule.SetIsShowPaypal(false);
       console.error("failed to load the PayPal JS SDK script", error);
     });
 }
