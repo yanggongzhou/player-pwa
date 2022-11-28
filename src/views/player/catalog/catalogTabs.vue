@@ -38,6 +38,7 @@ import { AppModule } from '@/store/modules/app'
 import { netVideoPre } from '@/api/player'
 import { getTabs } from '@/utils/getTabs'
 import { debounce } from 'throttle-debounce'
+import { DeviceModule } from '@/store/modules/device'
 
 const tabIndex = ref(ChaptersModule.tabIndex)
 const totalChapters = computed(() => ChaptersModule.totalChapters)
@@ -56,6 +57,8 @@ const tabData = computed(() => getTabs(30, totalChapters.value))
 
 const selectChapter = debounce(300, async (chapter: ICatalogListItem) => {
   if (chapter.isCharge === EIsCharge.收费) {
+    DeviceModule.SetIsShowPaypal(true);
+
     AppModule.RefreshVideoSource({
       bookInfo: AppModule.bookInfo,
       chapterInfo: {

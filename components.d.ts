@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     LoadingCircle: typeof import('./src/components/loadingCircle.vue')['default']
     LoadingNormal: typeof import('./src/components/loadingNormal.vue')['default']
     NetworkErr: typeof import('./src/components/networkErr.vue')['default']
+    PayPopup: typeof import('./src/components/PayPopup.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     VanCountDown: typeof import('vant/es')['CountDown']

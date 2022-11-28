@@ -16,6 +16,12 @@ class Device extends VuexModule implements IDeviceState {
   public isShowUnlockTip = false; // 是否显示解锁章节提示
   public isShowOperationTip = false; // 是否显示新手引导提示
   public isNeedReload = false; // 断网造成的视频加载失败是否需要reload
+  public isShowPaypal = false; // 是否显示paypal支付弹框
+
+  @Mutation
+  private SET_ISSHOWPAYPAL (isShowPaypal: boolean) {
+    this.isShowPaypal = isShowPaypal
+  }
 
   @Mutation
   private SET_ISNEEDRELOAD (isNeedReload: boolean) {
@@ -52,6 +58,11 @@ class Device extends VuexModule implements IDeviceState {
     if (this.readChapterList.indexOf(chapterId) === -1) {
       this.readChapterList.push(chapterId)
     }
+  }
+
+  @Action({ rawError: true })
+  public SetIsShowPaypal (is: boolean) { // 是否显示paypal支付弹框
+    this.SET_ISSHOWPAYPAL(is)
   }
 
   @Action({ rawError: true })

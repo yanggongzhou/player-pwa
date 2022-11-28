@@ -17,21 +17,46 @@ module.exports = defineConfig({
       start_url: ".",
       display: "standalone",
       background_color: "#000000",
+      appleMobileWebAppStatusBarStyle: 'black',
       // "theme_color": "white",
       // "display": "standalone",
       // "start_url": "./index.html",
       // "background_color": "#3367D6",
       // "id": "index.html",
-      "shortcuts": [
+      icons: [
         {
-          "name": "How's weather today?",
-          "short_name": "Today",
-          "description": "View weather information for today",
-          // "url": "index.html",
-          "icons": [{ "src": "./img/icons/manifest-icon-192.maskable.png", "sizes": "192x192" }]
+          'src': "img/logo.png",
+          'sizes': '192x192',
+          'type': 'image/png'
+        },
+        {
+          'src': "img/logo.png",
+          'sizes': '512x512',
+          'type': 'image/png'
+        },
+        {
+          'src': "img/logo.png",
+          'sizes': '192x192',
+          'type': 'image/png',
+          'purpose': 'maskable'
+        },
+        {
+          'src': "img/logo.png",
+          'sizes': '512x512',
+          'type': 'image/png',
+          'purpose': 'maskable'
         }
       ],
-      "description": "Weather forecast information"
+      // "shortcuts": [
+      //   {
+      //     "name": "How's weather today?",
+      //     "short_name": "Today",
+      //     "description": "View weather information for today",
+      //     // "url": "index.html",
+      //     "icons": [{ "src": "img/icons/logo.png", "sizes": "192x192" }]
+      //   }
+      // ],
+      // "description": "Weather forecast information"
     },
     //
     // 图标

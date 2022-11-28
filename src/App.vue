@@ -1,8 +1,12 @@
 <template>
-  <router-view/>
+  <div id="appWrap">
+    <PayPopup/>
+    <router-view/>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import PayPopup from '@/components/PayPopup.vue'
 import { onBeforeMount, onBeforeUnmount } from 'vue'
 import { AppModule } from '@/store/modules/app'
 import { DeviceModule } from '@/store/modules/device'
