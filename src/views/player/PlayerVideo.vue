@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
 import { netVideoPre } from '@/api/player'
 import VideoSwiper from '@/views/player/videoUnion/videoSwiper.vue'
 import CatalogNormal from '@/views/player/catalog/catalogNormal.vue'
@@ -33,6 +33,9 @@ import { IChapterInfo } from '@/types/player.interface'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'throttle-debounce'
 import OperationTip from '@/views/player/controlPage/operationTip.vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute();
 
 const isShowOperationTip = computed(() => DeviceModule.isShowOperationTip);
 const { t } = useI18n()
@@ -110,6 +113,10 @@ const onNextChapter = async () => {
     AppModule.AddSwipeList(data.chapterInfo)
   }
 }
+onBeforeMount(() => {
+  // 初始化数据
+  AppModule.InitVideoSource(route.query.bookId)
+})
 
 </script>
 

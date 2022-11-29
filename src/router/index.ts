@@ -1,7 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { App } from 'vue';
 import { createRouterGuards } from '@/router/router-guards';
-import PlayerVideo from '@/views/player/PlayerVideo.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -15,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/player',
     name: 'player',
-    component: PlayerVideo
+    component: () => import(/* webpackChunkName: "about" */ '@/views/player/PlayerVideo.vue')
   },
   // {
   //   path: '/theater',

@@ -40,19 +40,19 @@ const routeBack = () => {
   if (bookInfo.value.autoAdd === EAutoAdd.否) {
     DeviceModule.SetIsRetain(true)
   } else {
-    router.replace('theater')
+    router.replace('/')
   }
 }
 
 const onCancel = () => {
   DeviceModule.SetIsRetain(false)
-  router.replace('theater')
+  router.replace('/')
 }
 
 const onConfirm = () => {
   DeviceModule.SetIsRetain(false)
   netDrama(AppModule.bookInfo.bookId)
-  router.replace('theater')
+  router.replace('/')
 }
 
 const onCancelX = () => {

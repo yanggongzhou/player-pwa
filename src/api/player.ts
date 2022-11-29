@@ -11,9 +11,13 @@ console.log('-----------BASEURL----------->', BASEURL)
  * @param book_id
  * @param chapter_id
  */
-export const netVideoSource = async (book_id = '41000000003', chapter_id = ''): Promise<INetVideoSourceRes | void> => {
-  console.log('-----------初始化接口 / 快速打开接口----------->')
-  const { book } = await Service.post('/call/244.do', { book_id, chapter_id })
+export const netVideoSource = async (book_id = '', chapter_id = ''): Promise<INetVideoSourceRes | void> => {
+  console.log('-----------初始化接口 / 快速打开接口----------->', book_id)
+  const { book, chapter_list = [] } = await Service.post('/call/244.do', { book_id, chapter_id })
+  const chapterItem = chapter_list.find((chapter: any) => {
+    return chapter.chapter_id === book.content_list[0].chapter_id
+  })
+  const _chapterStatus = chapterItem && chapterItem.is_charge === '1' ? EChapterStatus.未付费 : EChapterStatus.免费
   const { videoInfo, chapter_img } = book.content_list[0]
   return {
     bookInfo: {
@@ -30,7 +34,7 @@ export const netVideoSource = async (book_id = '41000000003', chapter_id = ''): 
       chapterUrl: chapter_img,
       content: videoInfo,
       duration: videoInfo.duration,
-      chapterStatus: EChapterStatus.免费
+      chapterStatus: _chapterStatus
     }
   }
 }

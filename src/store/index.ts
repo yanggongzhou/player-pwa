@@ -13,7 +13,7 @@ export interface IStore {
 export const key: InjectionKey<Store<IStore>> = Symbol('player_pwa_hw')
 
 const store: Store<IStore | unknown> = createStore({
-  plugins: process.env.NODE_ENV !== 'production' ? [createLogger()] : [], // 在开发环境中开启logger
+  // plugins: process.env.NODE_ENV !== 'production' ? [createLogger()] : [], // 在开发环境中开启logger
   strict: process.env.NODE_ENV !== 'production' // 严格模式
 })
 

@@ -30,8 +30,6 @@ const updateOfflineStatus = () => {
 }
 
 onBeforeMount(() => {
-  // 初始化数据
-  AppModule.InitVideoSource()
   // 监听网络
   // 网络由异常到正常时触发
   window.addEventListener('online', updateOnlineStatus)
