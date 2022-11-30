@@ -11,8 +11,7 @@ body {
 body, html, #app, #appWrap {
     width: 100%;
     height: 100%;
-    background-color: #0F0F0F;
-    overflow: hidden;
+    background-color: #1a1a1a;
 }
 
 body, p, h1, h5, ul, li {

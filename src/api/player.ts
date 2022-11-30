@@ -13,7 +13,7 @@ console.log('-----------BASEURL----------->', BASEURL)
  */
 export const netVideoSource = async (book_id = '', chapter_id = ''): Promise<INetVideoSourceRes | void> => {
   console.log('-----------初始化接口 / 快速打开接口----------->', book_id)
-  const { book, chapter_list = [] } = await Service.post('/call/244.do', { book_id, chapter_id })
+  const { book, chapter_list = [] } = await Service.post('/asg/portal/call/244.do', { book_id, chapter_id })
   const chapterItem = chapter_list.find((chapter: any) => {
     return chapter.chapter_id === book.content_list[0].chapter_id
   })
@@ -46,6 +46,8 @@ export const netVideoSource = async (book_id = '', chapter_id = ''): Promise<INe
  */
 export const netVideoPre = async (book_id: string, chapter_id: string): Promise<INetVideoSourceRes | void> => {
   console.log('-----------章节预加载-----------', chapter_id)
+  const res = await Service.post('/asg/portal/call/236.do', { book_id, chapter_id })
+  console.log('122121', res)
   return await netVideoSource(book_id, chapter_id)
 }
 /**
@@ -66,7 +68,7 @@ export const netWebAndHeader = () => {
  */
 export const netCatalogList = async (params: ICatalogParams): Promise<INetCatalogListRes> => {
   console.log('-----------s 剧集列表-----------')
-  return await Service.post('/call/412.do', { pageSize: 30, ...params })
+  return await Service.post('/asg/portal/call/412.do', { pageSize: 30, ...params })
 }
 
 /**
@@ -95,5 +97,5 @@ export const netWebAndPay = (bookId: string, chapterId: string) => {
  */
 export const netRecommendBook = async (bookId: string): Promise<INetVideoSourceRes> => {
   console.log('-----------S 推荐书籍-----------')
-  return await Service.post('/call/413.do', { bookId })
+  return await Service.post('/asg/portal/call/413.do', { bookId })
 }

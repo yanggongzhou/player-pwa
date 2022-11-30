@@ -1,46 +1,76 @@
 <template>
   <div class="theaterWrap">
-    <h1 class="theater-title" @click="toPlayer">跳转至播放器</h1>
-    <h1 class="theater-title">剧场</h1>
-    <div class="theaterContent">
-      <div class="theater-item" v-for="val in list" :key="val.id" @click="toPlayer(val.id)">
-        <img :src="val.img_url[0]" alt="">
-        <p>{{val.title}}</p>
-      </div>
+    <TheaterSwipe :data-source="bannerList" @bannerClick="toPlayer"/>
+    <div class="theater-content" v-for="item in classData" :key="item.id">
+      <template v-if="item.children.length > 0">
+        <div class="theater-content_title">
+          {{ item.class_name }}
+        </div>
+        <div class="theaterContent">
+          <div class="theater-item" v-for="val in item.children" :key="val.id" @click="toPlayer(val.id)">
+            <img :src="val.cover_url" alt="" @error="imgError">
+            <p>{{val.title}}</p>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onBeforeMount, ref } from 'vue'
-import { netTheater } from '@/api/theater'
+import { netApplet, netClass } from '@/api/theater'
+import { imgError } from '@/utils/imgError'
 import { useRouter } from 'vue-router'
-
-const list = ref([])
+import TheaterSwipe from '@/views/theater/swiper/TheaterSwipe.vue'
+import { IClassListItem, IIndexContent } from '@/types/theater.interface'
+const router = useRouter();
+const bannerList = ref<IIndexContent[]>([]);
+const classData = ref<IClassListItem[]>([])
 
 onBeforeMount(() => {
-  getTheaterData()
+  initTheaterData()
 });
-const router = useRouter();
+
 const toPlayer = (bookId?: string) => {
   router.push({ name: 'player', query: { bookId } })
 }
 
 const getTheaterData = async () => {
-  const { section } = await netTheater()
-  list.value = section[1].items.filter(sec => sec.bookType === 4)
+  if (classData.value.length > 0) {
+    const classIds = classData.value.map(val => val.id);
+    const list = await netClass(classIds.slice(0, 3).join(','));
+    classData.value = classData.value.map(val => {
+      const items = list.filter(li => li.class_id === val.id)
+      return {
+        ...val,
+        children: [...items]
+      }
+    });
+  }
+}
+
+const initTheaterData = async () => {
+  classData.value = [];
+  const { Applet, Index = [], Class = [] } = await netApplet()
+  bannerList.value = Index.map(val => JSON.parse(val.content) as IIndexContent);
+  classData.value = Class.map(val => ({ ...val, children: [] }));
+  await getTheaterData()
 }
 </script>
 
 <style lang="less" scoped>
 .theaterWrap {
-  padding: 0.2rem 0.4rem;
-  .theater-title {
-    margin-top: 0.2rem;
-    font-size: 0.4rem;
-    font-weight: 500;
-    color: #FFFFFF;
-    text-shadow: 0 0.02rem 0.06rem rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+  padding: 0.2rem 0.3rem;
+  .theater-content {
+    padding: 0.2rem 0.1rem;
+    .theater-content_title {
+      font-size: 0.3rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-shadow: 0 0.02rem 0.06rem rgba(0, 0, 0, 0.4);
+    }
   }
 }
 .theaterContent {
@@ -51,6 +81,7 @@ const getTheaterData = async () => {
   .theater-item {
     width: 100%;
     font-size: 0.2rem;
+    margin-bottom: 0.2rem;
     img {
       width: 100%;
       height: 3rem;

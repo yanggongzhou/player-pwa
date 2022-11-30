@@ -9,18 +9,22 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BackTitle: typeof import('./src/components/backTitle.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    Layout: typeof import('./src/components/layout/layout.vue')['default']
     LoadingCircle: typeof import('./src/components/loadingCircle.vue')['default']
     LoadingNormal: typeof import('./src/components/loadingNormal.vue')['default']
     NetworkErr: typeof import('./src/components/networkErr.vue')['default']
     PayPopup: typeof import('./src/components/PayPopup.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VanConfigProvider: typeof import('vant/es')['ConfigProvider']
     VanCountDown: typeof import('vant/es')['CountDown']
     VanLoading: typeof import('vant/es')['Loading']
     VanPopup: typeof import('vant/es')['Popup']
     VanSwipe: typeof import('vant/es')['Swipe']
     VanSwipeItem: typeof import('vant/es')['SwipeItem']
     VanTab: typeof import('vant/es')['Tab']
+    VanTabbar: typeof import('vant/es')['Tabbar']
+    VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTabs: typeof import('vant/es')['Tabs']
   }
 }

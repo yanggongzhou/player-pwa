@@ -1,6 +1,6 @@
 <template>
   <div id="appWrap">
-    <PayPopup/>
+<!--    <PayPopup/>-->
     <router-view/>
   </div>
 </template>

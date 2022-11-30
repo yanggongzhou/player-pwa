@@ -111,6 +111,10 @@ module.exports = defineConfig({
         // target: 'http://192.168.8.142:8080', // 后端
         target: 'http://192.168.0.241:4080',
         changeOrigin: true, // 是否跨域
+      },
+      '/api': {
+        target: 'https://zf.jxjzwh.cn',
+        changeOrigin: true, // 是否跨域
       }
     },
   }

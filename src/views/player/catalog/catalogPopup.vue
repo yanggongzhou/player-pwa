@@ -6,7 +6,7 @@
     position="bottom"
     @click-overlay="closeCatalog"
     close-on-click-overlay
-    :duration="0"
+    :duration="0.3"
     round>
     <div class="catalogListWrap">
       <div class="closeBox" @click="closeCatalog">

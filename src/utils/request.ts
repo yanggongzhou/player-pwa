@@ -39,7 +39,7 @@ const pending: PendingType[] = [];
 const CancelToken = axios.CancelToken;
 
 const Service = axios.create({
-  baseURL: '/asg/portal',
+  // baseURL: '',
   withCredentials: true,
   timeout: 10 * 1000
 });
@@ -47,10 +47,13 @@ const Service = axios.create({
 // 添加请求拦截器
 Service.interceptors.request.use(
   (request: AxiosRequestConfig) => {
-    request.data = {
-      pri: { ...request.data },
-      pub: tempPub,
-    }
+    // request.data = {
+    //   pri: { ...request.data },
+    //   pub: tempPub,
+    // }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    request.headers['App-Origin'] = 'wx3e1e4c735213dcb5'
     request.cancelToken = new CancelToken((c: Canceler) => {
       pending.push({
         url: request.url,
@@ -73,6 +76,9 @@ Service.interceptors.response.use(
     if (response.status === 200) {
       if (response.data.pri) {
         return Promise.resolve(response.data.pri)
+      }
+      if (response.data.code === 200 || response.data.data) {
+        return Promise.resolve(response.data.data)
       }
       return Promise.resolve('BadRequest')
     }

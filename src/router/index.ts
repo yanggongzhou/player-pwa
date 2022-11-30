@@ -1,15 +1,36 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { App } from 'vue';
 import { createRouterGuards } from '@/router/router-guards';
+import LayoutCom from '@/components/layout/layout.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'theater',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/views/theater/Theater.vue')
+    redirect: '/theater',
+    component: LayoutCom,
+    children: [
+      {
+        path: '/drama',
+        name: 'drama',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '@/views/drama/Drama.vue')
+      },
+      {
+        path: '/theater',
+        name: 'theater',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "about" */ '@/views/theater/Theater.vue')
+      },
+      {
+        path: '/self',
+        name: 'self',
+        component: () => import(/* webpackChunkName: "about" */ '@/views/self/Self.vue')
+      },
+    ]
   },
   {
     path: '/player',
