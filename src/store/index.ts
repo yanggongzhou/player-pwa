@@ -1,13 +1,15 @@
 import { createStore, createLogger, useStore as baseUseStore, Store } from 'vuex'
 import { App, InjectionKey } from 'vue'
 import {
-  IAppState, IChaptersState, IDeviceState
+  IAppState, IChaptersState, IDeviceState, IPlayerState, IUserState
 } from '@/store/modules/index.model'
 
 export interface IStore {
   app: IAppState; // app其他信息
   device: IDeviceState;
   chapters: IChaptersState;
+  user: IUserState;
+  player: IPlayerState;
 }
 
 export const key: InjectionKey<Store<IStore>> = Symbol('player_pwa_hw')

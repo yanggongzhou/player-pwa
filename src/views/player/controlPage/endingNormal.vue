@@ -22,11 +22,11 @@ import IconLine from '@/assets/images/line.png'
 import { computed } from 'vue'
 import { EBookFinishStatus } from '@/types/common.interface'
 import { AppModule } from '@/store/modules/app'
-import { ChaptersModule } from '@/store/modules/chapters'
 import { useI18n } from 'vue-i18n'
+import { PlayerModule } from '@/store/modules/player'
 
-const isEndPageVisible = computed(() => AppModule.isShowEndPage) // 结束页
-const bookFinishStatus = computed(() => AppModule.bookInfo.bookFinishStatus || 0)
+const isEndPageVisible = computed(() => PlayerModule.isShowEndPage) // 结束页
+const bookFinishStatus = computed(() => PlayerModule.parent_info.is_over || 0)
 const recommendBookName = computed(() => AppModule.recommendData.bookInfo ? AppModule.recommendData.bookInfo.bookName : '')
 const recommendBookCover = computed(() => AppModule.recommendData.bookInfo ? AppModule.recommendData.bookInfo.bookCover : '')
 const { t } = useI18n()
@@ -43,12 +43,9 @@ const h2Txt = computed(() => {
 // 倒计时结束
 const countDownFinish = async () => {
   console.log('-----------倒计时结束-----------')
-  if (AppModule.isShowEndPage) {
-    const data = JSON.parse(JSON.stringify(AppModule.recommendData))
-    await ChaptersModule.GetAllChapterList(data.bookInfo.bookId)
-    AppModule.SetIsShowEndPage(false)
-    await AppModule.RefreshVideoSource(data)
-    await AppModule.RecommendVideoSource(data.bookInfo.bookId)
+  if (PlayerModule.isShowEndPage) {
+    PlayerModule.SetIsShowEndPage(false)
+    // todo
   }
 }
 </script>

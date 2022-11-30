@@ -15,12 +15,11 @@
         <div
           @click="selectChapter(chapter)"
           class="catalogItem"
-          :class="chapter.chapterId === chapterId && 'catalogItemActive'"
+          :class="chapter.id === chapterId && 'catalogItemActive'"
           v-for="chapter in chapterAllList.slice(ind * 30, (ind + 1) * 30)"
-          :key="chapter.chapterId">
-          <img v-if="chapter.isCharge === EIsCharge.收费" :src="IconLock" alt="lock">
-          <img v-if="chapter.isCharge === EIsCharge.收费已购买" :src="IconUnLock" alt="unlock">
-          <div>{{ chapter.chapterIndex }}</div>
+          :key="chapter.id">
+          <img v-if="chapter.lock === EnumLock.unlock" :src="IconLock" alt="lock">
+          <div>{{ chapter.num }}</div>
         </div>
       </div>
     </van-tab>
@@ -31,19 +30,16 @@
 import { computed, ref, watch } from 'vue'
 import { ChaptersModule } from '@/store/modules/chapters'
 import IconLock from '@/assets/images/lock.png'
-import IconUnLock from '@/assets/images/unlock.png'
-import { EChapterStatus, EIsCharge } from '@/types/common.interface'
-import { ICatalogListItem } from '@/types/player.interface'
-import { AppModule } from '@/store/modules/app'
-import { netVideoPre } from '@/api/player'
 import { getTabs } from '@/utils/getTabs'
 import { debounce } from 'throttle-debounce'
 import { DeviceModule } from '@/store/modules/device'
+import { PlayerModule } from '@/store/modules/player'
+import { EnumLock, ITheaterItem } from '@/types/player.interface'
 
 const tabIndex = ref(ChaptersModule.tabIndex)
-const totalChapters = computed(() => ChaptersModule.totalChapters)
-const chapterAllList = computed(() => ChaptersModule.chapterAllList)
-const chapterId = computed(() => AppModule.swipeList.length > 0 ? AppModule.swipeList[AppModule.swipeIndex].chapterId : '')
+const totalChapters = computed(() => PlayerModule.theaters.length)
+const chapterAllList = computed(() => PlayerModule.theaters)
+const chapterId = computed(() => PlayerModule.theaters.length > 0 ? PlayerModule.theaters[PlayerModule.swipeIndex].id : '')
 
 watch(() => ChaptersModule.tabIndex, (ind) => {
   tabIndex.value = ind
@@ -53,28 +49,15 @@ const changeTab = (index: number) => {
   ChaptersModule.SetTabIndex(index)
 }
 
-const tabData = computed(() => getTabs(30, totalChapters.value))
+const tabData = computed(() => getTabs(30, PlayerModule.theaters.length))
 
-const selectChapter = debounce(300, async (chapter: ICatalogListItem) => {
-  if (chapter.isCharge === EIsCharge.收费) {
+const selectChapter = debounce(300, async (chapter: ITheaterItem) => {
+  if (chapter.lock === EnumLock.lock) {
     DeviceModule.SetIsShowPaypal(true);
-
-    AppModule.RefreshVideoSource({
-      bookInfo: AppModule.bookInfo,
-      chapterInfo: {
-        chapterId: chapter.chapterId,
-        chapterStatus: EChapterStatus.未付费,
-        chapterIndex: chapter.chapterIndex,
-        chapterName: chapter.chapterName
-      }
-    })
-  } else {
-    console.log('-----------选择章节-----------', chapter.chapterId)
-    const data = await netVideoPre(AppModule.bookInfo.bookId, chapter.chapterId)
-    if (!data) return;
-    AppModule.RefreshSelectSource(data.chapterInfo)
+    // todo
   }
   ChaptersModule.SetIsCatalogPopupVisible(false)
+  PlayerModule.SetSwipeIndex(chapter.num - 1)
 })
 
 </script>

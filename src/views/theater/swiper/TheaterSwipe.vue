@@ -13,14 +13,13 @@
       v-for="(val,ind) in dataSource"
       :key="val.video_id">
       <div class="swipeItemContent">
-        <img class="posterImg" :src="val.image_link" @click="emits('bannerClick')" @error="imgError" alt="">
+        <img class="posterImg" :src="val.image_link" @click="emits('bannerClick')" alt="">
       </div>
     </van-swipe-item>
   </van-swipe>
 </template>
 
 <script lang="ts" setup>
-import { imgError } from '@/utils/imgError'
 import { PropType } from 'vue'
 import { IIndexContent } from '@/types/theater.interface'
 

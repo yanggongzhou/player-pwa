@@ -17,62 +17,45 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
-import { netVideoPre } from '@/api/player'
+import { computed, onBeforeMount, ref } from 'vue'
 import VideoSwiper from '@/views/player/videoUnion/videoSwiper.vue'
 import CatalogNormal from '@/views/player/catalog/catalogNormal.vue'
 import { Toast } from 'vant'
 import BackTitle from '@/components/backTitle.vue'
 import NetworkErr from '@/components/networkErr.vue'
 import EndingNormal from '@/views/player/controlPage/endingNormal.vue'
-import { AppModule } from '@/store/modules/app'
 import { DeviceModule } from '@/store/modules/device'
 import { ChaptersModule } from '@/store/modules/chapters'
-import { EChapterStatus, EIsCharge } from '@/types/common.interface'
-import { IChapterInfo } from '@/types/player.interface'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'throttle-debounce'
 import OperationTip from '@/views/player/controlPage/operationTip.vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
+import { PlayerModule } from '@/store/modules/player'
+import { EnumLock, ITheaterItem } from '@/types/player.interface'
+import { netPlayerInfo } from '@/api/player'
 
 const route = useRoute();
 
 const isShowOperationTip = computed(() => DeviceModule.isShowOperationTip);
 const { t } = useI18n()
 const onRefresh = async () => {
-  if (chapterInfo.value.chapterIndex === 1) {
+  if (chapterInfo.value.num === 1) {
     Toast({ message: t('player.firstTip'), position: 'top', className: 'topToastBox' })
     return
   }
-  const preChapter = ChaptersModule.chapterAllList[chapterInfo.value.chapterIndex - 2]
+  const preChapter = PlayerModule.theaters[chapterInfo.value.num - 2]
   if (!preChapter || !preChapter.chapterId) return
-  if (preChapter.isCharge === EIsCharge.收费) {
+  if (preChapter.lock === EnumLock.lock) {
     if (!ChaptersModule.isPayVisible) {
-      // 上滑上一章付费情况
-      AppModule.RefreshVideoSource({
-        bookInfo: AppModule.bookInfo,
-        chapterInfo: {
-          chapterId: preChapter.chapterId,
-          chapterStatus: EChapterStatus.未付费,
-          chapterIndex: preChapter.chapterIndex,
-          chapterName: preChapter.chapterName
-        }
-      })
+      // 上滑上一章付费情况 todo
+
     }
-  } else {
-    const data = await netVideoPre(AppModule.bookInfo.bookId, preChapter.chapterId)
-    if (!data) return;
-    AppModule.RefreshVideoSource({
-      bookInfo: AppModule.bookInfo, chapterInfo: data.chapterInfo
-    })
   }
 }
 
-const chapterInfo = computed(() => AppModule.swipeList[AppModule.swipeIndex] || {} as IChapterInfo)
-
 // 监听上滑行为 当列表为空 或 swipe的索引不是首页时禁止执行
-const shouldWatchTouchUp = computed(() => AppModule.swipeList.length === 0 || AppModule.swipeIndex !== 0)
-const shouldWatchTouchDown = computed(() => AppModule.swipeList.length === 0 || AppModule.swipeIndex !== AppModule.swipeList.length - 1)
+const shouldWatchTouchUp = computed(() => PlayerModule.theaters.length === 0 || PlayerModule.swipeIndex !== 0)
+const shouldWatchTouchDown = computed(() => PlayerModule.theaters.length === 0 || PlayerModule.swipeIndex !== PlayerModule.theaters.length - 1)
 const touchY = ref(0)
 const playTouchstart = (e: TouchEvent) => {
   touchY.value = e.targetTouches[0].clientY
@@ -92,30 +75,21 @@ const playTouchmove = debounce(500, (e: TouchEvent) => {
 })
 
 const onNextChapter = async () => {
-  const nextChapter = ChaptersModule.chapterAllList[chapterInfo.value.chapterIndex]
-  if (!nextChapter || !nextChapter.chapterId || chapterInfo.value.chapterIndex === ChaptersModule.totalChapters) return
-  if (nextChapter.isCharge === EIsCharge.收费) {
+  const nextChapter = PlayerModule.theaters[chapterInfo.value.num]
+  if (!nextChapter || !nextChapter.chapterId || chapterInfo.value.num === PlayerModule.theaters.length) return
+  if (nextChapter.lock === EnumLock.lock) {
     if (!ChaptersModule.isPayVisible) {
-      // 上滑上一章付费情况
-      AppModule.RefreshVideoSource({
-        bookInfo: AppModule.bookInfo,
-        chapterInfo: {
-          chapterId: nextChapter.chapterId,
-          chapterStatus: EChapterStatus.未付费,
-          chapterIndex: nextChapter.chapterIndex,
-          chapterName: nextChapter.chapterName
-        }
-      })
+      // 上滑上一章付费情况 todo
     }
-  } else {
-    const data = await netVideoPre(AppModule.bookInfo.bookId, nextChapter.chapterId)
-    if (!data) return
-    AppModule.AddSwipeList(data.chapterInfo)
   }
 }
-onBeforeMount(() => {
+
+const chapterInfo = computed(() => PlayerModule.theaters[PlayerModule.swipeIndex] || {} as ITheaterItem)
+onBeforeMount(async () => {
   // 初始化数据
-  AppModule.InitVideoSource(route.query.bookId)
+  const { parent_info, theaters = [] } = await netPlayerInfo(Number(route.query.bookId))
+  PlayerModule.SetParentInfo(parent_info);
+  PlayerModule.SetTheaters(theaters);
 })
 
 </script>

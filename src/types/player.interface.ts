@@ -1,60 +1,36 @@
-import { EAutoAdd, EBookFinishStatus, EChapterStatus, EIsCharge, EIsSimplified } from '@/types/common.interface'
-
-export interface IChapterContent {
-  mp4: string;
-  m3u8: string;
-  mp4720p: string;
-  m3u8720p: string;
+export enum EnumLock {
+  lock = 0,
+  unlock = 1,
 }
 
-export interface IChapterInfo {
-  chapterId: string;
-  chapterIndex: number;
-  chapterName: string;
-  chapterUrl?: string;
-  content?: IChapterContent,
-  duration?: number;
-  chapterStatus: EChapterStatus;
-  preChapterId?: string;
-  preChapterName?: string;
-  nextChapterId?: string;
-  nextChapterName?: string;
+export interface INetPlayerInfoRes {
+  parent_info: IParentInfo;
+  theaters: ITheaterItem[];
 }
 
-export interface IBookInfo {
-  bookId: string;
-  bookName: string;
-  autoAdd: EAutoAdd;
-  bookCover: string;
-  bookFinishStatus: EBookFinishStatus,
+export interface ITheaterItem {
+  id: number;
+  parent_id: number;
+  son_title: string;
+  son_cover_url: string;
+  son_video_url: string;
+  num: number;
+  tx_id: string;
+  lock: EnumLock
+  like_num: number;
 }
 
-export interface INetVideoSourceRes {
-  bookInfo: IBookInfo;
-  chapterInfo: IChapterInfo;
-  isSimplified?: EIsSimplified;
-  isFirstPlay?: boolean;
-}
-
-export interface ICatalogParams {
-  bookId: string;
-  pageNo?: number;
-  pageSize?: number;
-}
-
-export interface ICatalogListItem {
-  chapterId: string;
-  chapterName: string;
-  isCharge: EIsCharge;
-  chapterIndex: number;
-  chapterImg: string;
-}
-
-export interface INetCatalogListRes {
-  author: string;
-  bookName: string;
-  coverWap: string;
-  bookFinishStatus: EBookFinishStatus;
-  chapterList: ICatalogListItem[];
-  totalChapters: number;
+export interface IParentInfo {
+  id: number;
+  title: string;
+  cover_url: string;
+  vip: number;
+  share_title: string;
+  share_cover: string;
+  group_ids: string;
+  jump_ids: string;
+  is_over: number;
+  total: number;
+  default_pay_episode: number;
+  default_pay_amount: number;
 }

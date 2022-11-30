@@ -7,16 +7,15 @@
           <div class="btn" @click="emits('unlock')">{{ $t('player.unlockTip2') }}</div>
         </div>
       </div>
-      <img v-if="chapterUrl" class="unlockImgBg" :src="chapterUrl" @error="imgError" alt="">
+      <van-image class="unlockImgBg" :src="chapterUrl"/>
     </template>
-    <img v-if="!isShowUnlockTip && chapterUrl" class="unlockImg" :src="chapterUrl" @error="imgError" alt="">
+    <van-image v-if="!isShowUnlockTip && chapterUrl" class="unlockImg" :src="chapterUrl"/>
   </div>
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, watch } from 'vue'
 import { DeviceModule } from '@/store/modules/device'
-import { ChaptersModule } from '@/store/modules/chapters'
-import { imgError } from '@/utils/imgError'
+import { PlayerModule } from '@/store/modules/player'
 const emits = defineEmits(['unlock'])
 interface IProps {
   isShowPage: boolean;
@@ -24,7 +23,7 @@ interface IProps {
 }
 const props = defineProps<IProps>()
 // .. chapterImg
-const chapterUrl = computed(() => ChaptersModule.chapterAllList[props.chapterIndex - 1].chapterImg)
+const chapterUrl = computed(() => PlayerModule.theaters[props.chapterIndex - 1].son_cover_url)
 const isShowUnlockTip = computed(() => DeviceModule.isShowUnlockTip && props.isShowPage)
 watch(() => props.isShowPage, (isShowPage) => {
   if (isShowPage) {

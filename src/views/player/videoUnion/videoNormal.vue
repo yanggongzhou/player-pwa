@@ -33,11 +33,11 @@ import {
   watch,
 } from 'vue'
 import { VideoPlayer } from 'vue-video-player'
-import { IChapterInfo } from '@/types/player.interface'
 import { DeviceModule } from '@/store/modules/device'
-import { AppModule } from '@/store/modules/app'
 import { ChaptersModule } from '@/store/modules/chapters'
 import { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
+import { ITheaterItem } from '@/types/player.interface'
+import { PlayerModule } from '@/store/modules/player'
 
 defineComponent({
   VideoPlayer
@@ -50,7 +50,7 @@ const duration = ref(0) // 视频总时长
 const progress = ref(0) // 进度条
 
 interface IProps {
-  chapterInfo: IChapterInfo;
+  chapterInfo: ITheaterItem;
   isShowPage: boolean;
 }
 const props = defineProps<IProps>()
@@ -67,20 +67,15 @@ const options = reactive<VideoJsPlayerOptions>({
   defaultVolume: 1, // 默认音量大小
   loop: false, // 循环播放
   autoplay: props.isShowPage, // 自动播放
-  poster: props.chapterInfo.chapterUrl, // 封面
+  poster: props.chapterInfo.son_cover_url, // 封面
   fluid: true, // 当true时，将按比例缩放以适应其容器。
   // withCredentials: false,
   // hls: true,
   sources: [ // 等同于原生<video>标签中的一组<source>子标签，可实现优雅降级；type 属性规定媒体资源的 MIME 类型
     {
       type: 'video/mp4',
-      src: (props.chapterInfo.content && props.chapterInfo.content.mp4720p) as string // url地址
+      src: props.chapterInfo.son_video_url // url地址
     },
-    {
-      // type: 'application/x-mpegURL',
-      type: 'video/mp4',
-      src: (props.chapterInfo.content && props.chapterInfo.content.m3u8) as string // url地址
-    }
   ],
   controls: false, // 是否显示控制器
   playsinline: true // the video is to be played "inline", that is within the element's playback area
@@ -88,7 +83,7 @@ const options = reactive<VideoJsPlayerOptions>({
 })
 
 // 是否暂停视频
-watch(() => [AppModule.isShowEndPage, props.isShowPage, DeviceModule.isOnline, ChaptersModule.isPayVisible],
+watch(() => [PlayerModule.isShowEndPage, props.isShowPage, DeviceModule.isOnline, ChaptersModule.isPayVisible],
   ([isShowEndPage, isShowPage, isOnline, isPayVisible]) => {
     // 是否暂停视频
     // const isPlaying = videoInstance.value.paused && !videoInstance.value.paused()
@@ -111,7 +106,7 @@ watch(() => [props.isShowPage, DeviceModule.isOnline, ChaptersModule.isPayVisibl
   ([isShowPage, isOnline, isPayVisible]) => {
     const isPlaying = videoInstance.value.paused && videoInstance.value.paused()
     // 是否开始视频
-    if (isShowPage && !AppModule.isShowEndPage && !isPayVisible && isOnline && isPlaying) {
+    if (isShowPage && !PlayerModule.isShowEndPage && !isPayVisible && isOnline && isPlaying) {
       videoInstance.value.play()
     }
   }
@@ -139,7 +134,7 @@ const dragProgress = (progressValue: number) => {
   if (duration.value && duration.value > 0) {
     videoInstance.value.currentTime(progressValue / 100 * duration.value - 0.5)
   }
-  if (props.isShowPage && !AppModule.isShowEndPage && videoInstance.value.paused && videoInstance.value.paused()) {
+  if (props.isShowPage && !PlayerModule.isShowEndPage && videoInstance.value.paused && videoInstance.value.paused()) {
     videoInstance.value.play()
   }
 }
@@ -162,8 +157,8 @@ const onPause = () => {
 }
 const onEnded = () => {
   // 剧集播放完毕
-  if (ChaptersModule.totalChapters > 0 && props.chapterInfo.chapterIndex === ChaptersModule.totalChapters) {
-    AppModule.SetIsShowEndPage(true)
+  if (PlayerModule.theaters.length > 0 && props.chapterInfo.num === PlayerModule.theaters.length) {
+    PlayerModule.SetIsShowEndPage(true)
   } else {
     emits('videoEnd')
   }
@@ -173,9 +168,7 @@ const onTimeupdate = (ev: { target: { player: VideoJsPlayer } }) => {
   if (!duration.value || duration.value === 0) {
     duration.value = player.duration()
   }
-
   if (player.currentTime() > 0 && isShowPoster.value) {
-    DeviceModule.SetReadChapterList(props.chapterInfo.chapterId)
     isShowPoster.value = false
   }
   progress.value = Math.floor(player.currentTime() / duration.value * 100)

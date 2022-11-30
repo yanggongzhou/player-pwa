@@ -8,7 +8,7 @@
         </div>
         <div class="theaterContent">
           <div class="theater-item" v-for="val in item.children" :key="val.id" @click="toPlayer(val.id)">
-            <img :src="val.cover_url" alt="" @error="imgError">
+            <img class="theater-item_img" :src="val.cover_url" alt=""/>
             <p>{{val.title}}</p>
           </div>
         </div>
@@ -20,7 +20,6 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref } from 'vue'
 import { netApplet, netClass } from '@/api/theater'
-import { imgError } from '@/utils/imgError'
 import { useRouter } from 'vue-router'
 import TheaterSwipe from '@/views/theater/swiper/TheaterSwipe.vue'
 import { IClassListItem, IIndexContent } from '@/types/theater.interface'
@@ -82,7 +81,7 @@ const initTheaterData = async () => {
     width: 100%;
     font-size: 0.2rem;
     margin-bottom: 0.2rem;
-    img {
+    .theater-item_img {
       width: 100%;
       height: 3rem;
       border-radius: 0.08rem;

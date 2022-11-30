@@ -1,11 +1,8 @@
-import { IBookInfo, ICatalogListItem, IChapterInfo, INetVideoSourceRes } from '@/types/player.interface'
+import { INetPlayerInfoRes, IParentInfo, ITheaterItem } from '@/types/player.interface'
+import { INetLoginRes } from '@/types/self.interface'
 /** app */
 export interface IAppState {
-  bookInfo: IBookInfo;
-  swipeList: IChapterInfo[];
-  swipeIndex: number;
-  isShowEndPage: boolean;
-  recommendData: INetVideoSourceRes;
+  recommendData: IParentInfo;
 }
 
 /** Device */
@@ -13,7 +10,6 @@ export interface IDeviceState {
   isOnline: boolean;
   headerData: {[key: string]: any}
   readingStartTime: number;
-  readChapterList: string[];
   isRetain: boolean;
   isShowUnlockTip: boolean;
   isShowOperationTip: boolean; // 是否显示新手引导提示
@@ -24,7 +20,15 @@ export interface IDeviceState {
 export interface IChaptersState {
   tabIndex: number;
   totalChapters: number;
-  chapterAllList: ICatalogListItem[];
   isShowDrama: boolean;
   isPayVisible: boolean;
+}
+
+export interface IUserState {
+  userInfo: INetLoginRes;
+}
+
+export interface IPlayerState extends INetPlayerInfoRes {
+  swipeIndex: number;
+  isShowEndPage: boolean;
 }

@@ -28,11 +28,11 @@ import { computed } from 'vue'
 import { EBookFinishStatus } from '@/types/common.interface'
 import CatalogTabs from '@/views/player/catalog/catalogTabs.vue'
 import { ChaptersModule } from '@/store/modules/chapters'
-import { AppModule } from '@/store/modules/app'
+import { PlayerModule } from '@/store/modules/player'
 
 const isCatalogPopupVisible = computed(() => ChaptersModule.isCatalogPopupVisible)
-const bookName = computed(() => AppModule.bookInfo.bookName || '')
-const bookFinishStatus = computed(() => AppModule.bookInfo.bookFinishStatus || 0)
+const bookName = computed(() => PlayerModule.parent_info.title || '')
+const bookFinishStatus = computed(() => PlayerModule.parent_info.is_over || 0)
 
 const closeCatalog = () => {
   ChaptersModule.SetIsCatalogPopupVisible(false)

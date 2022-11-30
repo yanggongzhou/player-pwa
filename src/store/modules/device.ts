@@ -11,7 +11,6 @@ class Device extends VuexModule implements IDeviceState {
   public isOnline = true; // 网络情况
   public headerData = {}; // 请求头信息
   public readingStartTime = new Date().getTime(); // 开始阅读
-  public readChapterList = [] as string[]; // 阅读记录
   public isRetain = false; // 是否显示用户挽留弹框
   public isShowUnlockTip = false; // 是否显示解锁章节提示
   public isShowOperationTip = false; // 是否显示新手引导提示
@@ -53,12 +52,6 @@ class Device extends VuexModule implements IDeviceState {
     this.isOnline = is
   }
 
-  @Mutation
-  private SET_READCHAPTERLIST (chapterId: string) {
-    if (this.readChapterList.indexOf(chapterId) === -1) {
-      this.readChapterList.push(chapterId)
-    }
-  }
 
   @Action({ rawError: true })
   public SetIsShowPaypal (is: boolean) { // 是否显示paypal支付弹框
@@ -78,11 +71,6 @@ class Device extends VuexModule implements IDeviceState {
   @Action({ rawError: true }) // 是否显示新手引导提示
   public SetIsShowOperationTip (isShowOperationTip: boolean) {
     this.SET_ISSHOWOPERATIONTIP(isShowOperationTip)
-  }
-
-  @Action({ rawError: true })
-  public SetReadChapterList (chapterId: string) {
-    this.SET_READCHAPTERLIST(chapterId)
   }
 
   @Action({ rawError: true }) // 是否显示用户挽留弹框

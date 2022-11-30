@@ -2,7 +2,7 @@
   <div class="catalogWrap">
     <div class="catalogBox">
       <div class="bookInfo">
-        <h1>{{ bookInfo.bookName || '' }}</h1>
+        <h1>{{ bookInfo.title || '' }}</h1>
         <p>{{ chapterName }}</p>
       </div>
       <div v-if="isShowDrama" class="iconDramaBox" @click="dramaVideo">
@@ -32,20 +32,20 @@ import { EAutoAdd } from '@/types/common.interface'
 import CatalogPopup from '@/views/player/catalog/catalogPopup.vue'
 import { ChaptersModule } from '@/store/modules/chapters'
 import { netDrama } from '@/api/player'
-import { AppModule } from '@/store/modules/app'
 import { Toast } from 'vant'
 import { DeviceModule } from '@/store/modules/device'
 import { useI18n } from 'vue-i18n'
+import { PlayerModule } from '@/store/modules/player'
 
-const chapterName = computed(() => AppModule.swipeList.length > 0 ? `第${AppModule.swipeList[AppModule.swipeIndex].chapterIndex}集` : '')
-const bookInfo = computed(() => AppModule.bookInfo)
+const chapterName = computed(() => PlayerModule.theaters.length > 0 ? `第${PlayerModule.theaters[PlayerModule.swipeIndex].num}集` : '')
+const bookInfo = computed(() => PlayerModule.parent_info)
 const isShowDrama = computed(() => ChaptersModule.isShowDrama)
 const isOnline = computed(() => DeviceModule.isOnline)
 const { t } = useI18n()
 const dramaVideo = () => {
   if (bookInfo.value.autoAdd === EAutoAdd.是) return
-  netDrama(bookInfo.value.bookId)
-  AppModule.SetBookInfo({
+  netDrama(bookInfo.value.id)
+  PlayerModule.SetParentInfo({
     ...bookInfo.value,
     autoAdd: EAutoAdd.是
   })
@@ -57,10 +57,9 @@ const dramaVideo = () => {
 
 // 获取章节列表
 const openCatalog = () => {
-  const chapterInfo = AppModule.swipeList[AppModule.swipeIndex]
-  const index = chapterInfo ? Math.ceil(chapterInfo.chapterIndex / 30) - 1 : 0
+  const chapterInfo = PlayerModule.theaters[PlayerModule.swipeIndex]
+  const index = chapterInfo ? Math.ceil(chapterInfo.num / 30) - 1 : 0
   ChaptersModule.SetTabIndex(index)
-  ChaptersModule.GetAllChapterList(AppModule.bookInfo.bookId)
   ChaptersModule.SetIsCatalogPopupVisible(true)
 }
 

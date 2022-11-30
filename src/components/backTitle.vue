@@ -6,7 +6,7 @@
       <van-popup v-model:show="isRetain" round :close-on-click-overlay="false">
         <div class="retainBox">
           <img class="close" :src="IconClose" alt="" @click.stop="onCancelX">
-          <div class="bookName">{{ bookInfo.bookName || '' }}</div>
+          <div class="bookName">{{ bookInfo.title || '' }}</div>
           <p class="sub">{{ $t('player.backTip') }}</p>
           <div class="btnBox">
             <div class="cancel" @click.stop="onCancel">取消</div>
@@ -22,13 +22,13 @@ import IconClose from '@/assets/images/close-icon.png'
 import IconBack from '@/assets/images/back.png'
 import { computed } from 'vue'
 import { EAutoAdd } from '@/types/common.interface'
-import { AppModule } from '@/store/modules/app'
 import { DeviceModule } from '@/store/modules/device'
 import { netDrama } from '@/api/player'
 import { ChaptersModule } from '@/store/modules/chapters'
 import { useRouter } from 'vue-router'
-const chapterName = computed(() => AppModule.swipeList.length > 0 ? `第${AppModule.swipeList[AppModule.swipeIndex].chapterIndex}集` : '')
-const bookInfo = computed(() => AppModule.bookInfo)
+import { PlayerModule } from '@/store/modules/player'
+const chapterName = computed(() => PlayerModule.theaters.length > 0 ? `第${PlayerModule.theaters[PlayerModule.swipeIndex].num}集` : '')
+const bookInfo = computed(() => PlayerModule.parent_info)
 const isRetain = computed(() => DeviceModule.isRetain)
 const router = useRouter()
 // 退出播放器
@@ -51,7 +51,7 @@ const onCancel = () => {
 
 const onConfirm = () => {
   DeviceModule.SetIsRetain(false)
-  netDrama(AppModule.bookInfo.bookId)
+  netDrama(PlayerModule.parent_info.id)
   router.replace('/')
 }
 
